@@ -20,6 +20,10 @@
         {
             <RedirectToLogin />
         }
+        else if (User == null || Theme == null)
+        {
+            <p>Loading...</p>
+        }
         else
         {
             <CascadingValue Value="Theme">

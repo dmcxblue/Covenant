@@ -7,8 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Added ability to specify custom admin port number
+- Added Mono compiler support (`mcs`) for generating Windows-compatible assemblies from Linux
+- Added `COMPLUS_Version` environment variable setter for JScript/VBScript launchers on .NET 4.5+
+- Added GadgetGenerator.cs for BinaryFormatter serialized delegate gadget chains
 
 ### Changed
+- Simplified .NET Framework versions from (Net35, Net40, Net48) to (Net35, Net45, Net48)
+- Updated C# language version from C# 3.0/5.0 to C# 7.3 for all framework targets (language version controls syntax, not runtime)
+- Updated Mono compiler to use `-nostdlib -noconfig` flags to prevent BCL conflicts with Windows .NET assemblies
+- Renamed assembly reference directories from `net40` to `net45`
+- Updated default .NET version in appsettings.json to Net45
+- Cleaned up JScript/VBScript launcher templates (removed debug output)
 - Disallow Administrators from changing other user's passwords
 - Restrict non-admin users from visiting other user's profile in UI
 - Updated ShellCode task to use file upload of raw binary
@@ -19,6 +28,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Lock task execution during upload, display upload load animation
 
 ### Fixed
+- Fixed JScript/VBScript/HTA launchers not working on .NET 4.5 and .NET 4.8
+- Fixed Mono compiler duplicate type definitions when compiling with Windows .NET assemblies
+- Fixed C# compilation errors for .NET 3.5 targets using modern syntax features
 - Fix edit roles for CovenantUser UI bug
 - Fix profile bug when HttpGetResponse differs from HttpPostResponse
 - Fix TaskKill display bug

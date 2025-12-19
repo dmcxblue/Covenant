@@ -46,6 +46,7 @@ namespace Covenant.Core
         {
             public string Source { get; set; } = null;
             public List<string> SourceDirectories { get; set; } = null;
+            public bool UseMonoCompiler { get; set; } = false;
         }
 
         public class CsharpCoreCompilationRequest : CsharpCompilationRequest
@@ -124,7 +125,98 @@ namespace Covenant.Core
             }
             else
             {
-                return CompileCSharpRoslyn((CsharpFrameworkCompilationRequest)request);
+                var frameworkRequest = (CsharpFrameworkCompilationRequest)request;
+                // Use Mono compiler if requested and available (generates more compatible assemblies)
+                if (frameworkRequest.UseMonoCompiler && IsMonoAvailable())
+                {
+                    return CompileCSharpMono(frameworkRequest);
+                }
+                return CompileCSharpRoslyn(frameworkRequest);
+            }
+        }
+
+        private static bool? _monoAvailable = null;
+        private static bool IsMonoAvailable()
+        {
+            if (_monoAvailable.HasValue) return _monoAvailable.Value;
+            try
+            {
+                var p = new System.Diagnostics.Process();
+                p.StartInfo.FileName = "mcs";
+                p.StartInfo.Arguments = "--version";
+                p.StartInfo.UseShellExecute = false;
+                p.StartInfo.RedirectStandardOutput = true;
+                p.StartInfo.CreateNoWindow = true;
+                p.Start();
+                p.WaitForExit(5000);
+                _monoAvailable = p.ExitCode == 0;
+            }
+            catch
+            {
+                _monoAvailable = false;
+            }
+            return _monoAvailable.Value;
+        }
+
+        private static byte[] CompileCSharpMono(CsharpFrameworkCompilationRequest request)
+        {
+            // Create temp files
+            string tempDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            Directory.CreateDirectory(tempDir);
+            string sourceFile = Path.Combine(tempDir, "source.cs");
+            string outputFile = Path.Combine(tempDir, "output.dll");
+
+            try
+            {
+                // Write source to temp file
+                File.WriteAllText(sourceFile, request.Source);
+
+                // Build reference arguments - use -nostdlib to prevent Mono from loading its own BCL
+                // This ensures we only use the Windows .NET Framework assemblies from Covenant's references
+                var refArgs = request.References
+                    .Where(r => r.Framework == request.TargetDotNetVersion && r.Enabled)
+                    .Select(r => $"-r:\"{r.File}\"");
+
+                // Determine output type
+                string targetArg = request.OutputKind == OutputKind.ConsoleApplication ? "-target:exe" :
+                                   request.OutputKind == OutputKind.WindowsApplication ? "-target:winexe" :
+                                   "-target:library";
+
+                // Build mcs command with -nostdlib to use only explicit Windows .NET references
+                // -noconfig prevents loading default compiler response file
+                string args = $"-nostdlib -noconfig {targetArg} -optimize+ -out:\"{outputFile}\" {string.Join(" ", refArgs)} \"{sourceFile}\"";
+
+                var process = new System.Diagnostics.Process();
+                process.StartInfo.FileName = "mcs";
+                process.StartInfo.Arguments = args;
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.RedirectStandardError = true;
+                process.StartInfo.CreateNoWindow = true;
+                process.Start();
+
+                string stdout = process.StandardOutput.ReadToEnd();
+                string stderr = process.StandardError.ReadToEnd();
+                process.WaitForExit();
+
+                if (process.ExitCode != 0)
+                {
+                    throw new Exception($"Mono compilation failed: {stderr}");
+                }
+
+                byte[] result = File.ReadAllBytes(outputFile);
+
+                if (request.Confuse)
+                {
+                    return ConfuseAssembly(result);
+                }
+
+                return result;
+            }
+            finally
+            {
+                // Cleanup temp files
+                try { Directory.Delete(tempDir, true); } catch { }
             }
         }
 
@@ -169,17 +261,22 @@ namespace Covenant.Core
             List<SourceSyntaxTree> sourceSyntaxTrees = new List<SourceSyntaxTree>();
             List<SyntaxTree> compilationTrees = new List<SyntaxTree>();
 
+            // Use C# 7.3 for all targets - language version controls syntax features, not runtime compatibility
+            // The target .NET Framework version (via assembly references) determines runtime features
+            // C# 7.3 is the last version before C# 8.0 which introduced runtime-dependent features
+            var parseOptions = new CSharpParseOptions(LanguageVersion.CSharp7_3);
+
             if (request.SourceDirectories != null)
             {
                 foreach (var sourceDirectory in request.SourceDirectories)
                 {
                     sourceSyntaxTrees.AddRange(Directory.GetFiles(sourceDirectory, "*.cs", SearchOption.AllDirectories)
-                        .Select(F => new SourceSyntaxTree { FileName = F, SyntaxTree = CSharpSyntaxTree.ParseText(File.ReadAllText(F), new CSharpParseOptions()) })
+                        .Select(F => new SourceSyntaxTree { FileName = F, SyntaxTree = CSharpSyntaxTree.ParseText(File.ReadAllText(F), parseOptions) })
                         .ToList());
                     compilationTrees.AddRange(sourceSyntaxTrees.Select(S => S.SyntaxTree).ToList());
                 }
             }
-            SyntaxTree sourceTree = CSharpSyntaxTree.ParseText(request.Source, new CSharpParseOptions());
+            SyntaxTree sourceTree = CSharpSyntaxTree.ParseText(request.Source, parseOptions);
             compilationTrees.Add(sourceTree);
 
             List<PortableExecutableReference> references = request.References
@@ -202,7 +299,7 @@ namespace Covenant.Core
             if (request.Optimize)
             {
                 // Find all Types used by the generated compilation
-                HashSet<ITypeSymbol> usedTypes = new HashSet<ITypeSymbol>();
+                HashSet<ITypeSymbol> usedTypes = new HashSet<ITypeSymbol>(SymbolEqualityComparer.Default);
                 GetUsedTypesRecursively(compilation, sourceTree, ref usedTypes, ref sourceSyntaxTrees);
                 List<string> usedTypeNames = usedTypes.Select(T => GetFullyQualifiedTypeName(T)).ToList();
 
@@ -216,7 +313,7 @@ namespace Covenant.Core
                     .Select(T => GetFullyQualifiedContainingNamespaceName(T)).Distinct().ToList();
                 List<SyntaxNode> unusedUsingDirectives = sourceTree.GetRoot().DescendantNodes().Where(N =>
                 {
-                    return N.Kind() == SyntaxKind.UsingDirective && !((UsingDirectiveSyntax)N).Name.ToFullString().StartsWith("System.") && !usedNamespaceNames.Contains(((UsingDirectiveSyntax)N).Name.ToFullString());
+                    return N.IsKind(SyntaxKind.UsingDirective) && !((UsingDirectiveSyntax)N).Name.ToFullString().StartsWith("System.") && !usedNamespaceNames.Contains(((UsingDirectiveSyntax)N).Name.ToFullString());
                 }).ToList();
                 sourceTree = sourceTree.GetRoot().RemoveNodes(unusedUsingDirectives, SyntaxRemoveOptions.KeepNoTrivia).SyntaxTree;
 
@@ -273,25 +370,42 @@ namespace Covenant.Core
 
         private static byte[] ConfuseAssembly(byte[] ILBytes)
         {
-            ConfuserProject project = new ConfuserProject();
-            System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
-            File.WriteAllBytes(Common.CovenantTempDirectory + "confused", ILBytes);
-            string ProjectFile = String.Format(
-                ConfuserExOptions,
-                Common.CovenantTempDirectory,
-                Common.CovenantTempDirectory,
-                "confused"
-            );
-            doc.Load(new StringReader(ProjectFile));
-            project.Load(doc);
-            project.ProbePaths.Add(Common.CovenantAssemblyReferenceNet35Directory);
-            project.ProbePaths.Add(Common.CovenantAssemblyReferenceNet40Directory);
+            string tempFile = Common.CovenantTempDirectory + "confused";
+            try
+            {
+                ConfuserProject project = new ConfuserProject();
+                System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
+                File.WriteAllBytes(tempFile, ILBytes);
+                string ProjectFile = String.Format(
+                    ConfuserExOptions,
+                    Common.CovenantTempDirectory,
+                    Common.CovenantTempDirectory,
+                    "confused"
+                );
+                doc.Load(new StringReader(ProjectFile));
+                project.Load(doc);
+                project.ProbePaths.Add(Common.CovenantAssemblyReferenceNet35Directory);
+                project.ProbePaths.Add(Common.CovenantAssemblyReferenceNet45Directory);
+                project.ProbePaths.Add(Common.CovenantAssemblyReferenceNet48Directory);
 
-            ConfuserParameters parameters = new ConfuserParameters();
-            parameters.Project = project;
-            parameters.Logger = default;
-            ConfuserEngine.Run(parameters).Wait();
-            return File.ReadAllBytes(Common.CovenantTempDirectory + "confused");
+                ConfuserParameters parameters = new ConfuserParameters();
+                parameters.Project = project;
+                parameters.Logger = default;
+                ConfuserEngine.Run(parameters).Wait();
+                return File.ReadAllBytes(tempFile);
+            }
+            finally
+            {
+                // Clean up temporary file
+                try
+                {
+                    if (File.Exists(tempFile)) File.Delete(tempFile);
+                }
+                catch (Exception ex)
+                {
+                    Console.Error.WriteLine($"Warning: Failed to delete temporary confuser file '{tempFile}': {ex.Message}");
+                }
+            }
         }
 
         private static string ConfuserExOptions { get; set; } = @"
@@ -344,7 +458,7 @@ namespace Covenant.Core
             SemanticModel model = compilation.GetSemanticModel(tree);
             return null != tree.GetRoot().DescendantNodes().FirstOrDefault(SN =>
             {
-                if (SN.Kind() != SyntaxKind.ClassDeclaration)
+                if (!SN.IsKind(SyntaxKind.ClassDeclaration))
                 {
                     return false;
                 }
@@ -362,10 +476,11 @@ namespace Covenant.Core
         {
             SemanticModel sm = compilation.GetSemanticModel(sourceTree);
 
-            return sourceTree.GetRoot().DescendantNodes().Select(N => sm.GetSymbolInfo(N).Symbol).Where(S =>
+            var types = sourceTree.GetRoot().DescendantNodes().Select(N => sm.GetSymbolInfo(N).Symbol).Where(S =>
             {
                 return S != null && typeKinds.Contains(S.Kind);
-            }).Select(T => (ITypeSymbol)T).ToHashSet();
+            }).Select(T => (ITypeSymbol)T);
+            return new HashSet<ITypeSymbol>(types, SymbolEqualityComparer.Default);
         }
 
         private static HashSet<ITypeSymbol> GetUsedTypesRecursively(CSharpCompilation compilation, SyntaxTree sourceTree, ref HashSet<ITypeSymbol> currentUsedTypes, ref List<SourceSyntaxTree> sourceSyntaxTrees)

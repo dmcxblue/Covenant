@@ -32,22 +32,70 @@ namespace Covenant.Models.Launchers
             this.StagerCode = StagerCode;
             string inputf = Common.CovenantTempDirectory + Utilities.GetSanitizedFilename(template.Name + ".exe");
             string outputf = Common.CovenantTempDirectory + Utilities.GetSanitizedFilename(template.Name + ".bin");
-            File.WriteAllBytes(inputf, StagerAssembly);
-            DonutConfig config = new DonutConfig
+
+            try
             {
-                Arch = 3,
-                Bypass = 3,
-                InputFile = inputf,
-                Class = "GruntStager",
-                Method = "Execute",
-                Args = "",
-                Payload = outputf
-            };
-            int ret = Generator.Donut_Create(ref config);
-            if (ret == Constants.DONUT_ERROR_SUCCESS)
+                File.WriteAllBytes(inputf, StagerAssembly);
+                DonutConfig config = new DonutConfig
+                {
+                    Arch = 3,
+                    Bypass = 3,
+                    InputFile = inputf,
+                    Class = "GruntStager",
+                    Method = "Execute",
+                    Args = "",
+                    Payload = outputf
+                };
+                int ret = Generator.Donut_Create(ref config);
+                if (ret == Constants.DONUT_ERROR_SUCCESS)
+                {
+                    this.Base64ILByteString = Convert.ToBase64String(File.ReadAllBytes(outputf));
+                    this.LauncherString = template.Name + ".bin";
+                }
+                else
+                {
+                    string errorMessage = ret switch
+                    {
+                        Constants.DONUT_ERROR_FILE_NOT_FOUND => "Input file not found",
+                        Constants.DONUT_ERROR_FILE_EMPTY => "Input file is empty",
+                        Constants.DONUT_ERROR_FILE_ACCESS => "Cannot access input file",
+                        Constants.DONUT_ERROR_FILE_INVALID => "Invalid input file format",
+                        Constants.DONUT_ERROR_NET_PARAMS => "Invalid .NET parameters",
+                        Constants.DONUT_ERROR_NO_MEMORY => "Out of memory",
+                        Constants.DONUT_ERROR_INVALID_ARCH => "Invalid architecture specified",
+                        Constants.DONUT_ERROR_INVALID_URL => "Invalid URL",
+                        Constants.DONUT_ERROR_URL_LENGTH => "URL length exceeds limit",
+                        Constants.DONUT_ERROR_INVALID_PARAMETER => "Invalid parameter",
+                        Constants.DONUT_ERROR_RANDOM => "Random generation error",
+                        Constants.DONUT_ERROR_DLL_FUNCTION => "DLL function not found",
+                        Constants.DONUT_ERROR_ARCH_MISMATCH => "Architecture mismatch",
+                        Constants.DONUT_ERROR_DLL_PARAM => "DLL parameter error",
+                        Constants.DONUT_ERROR_BYPASS_INVALID => "Invalid bypass option",
+                        Constants.DONUT_ERROR_NORELOC => "No relocation information",
+                        _ => $"Donut shellcode generation error (code: {ret})"
+                    };
+                    throw new Exception($"ShellCode generation failed: {errorMessage}");
+                }
+            }
+            finally
             {
-                this.Base64ILByteString = Convert.ToBase64String(File.ReadAllBytes(outputf));
-                this.LauncherString = template.Name + ".bin";
+                // Clean up temporary files
+                try
+                {
+                    if (File.Exists(inputf)) File.Delete(inputf);
+                }
+                catch (Exception ex)
+                {
+                    Console.Error.WriteLine($"Warning: Failed to delete temporary input file '{inputf}': {ex.Message}");
+                }
+                try
+                {
+                    if (File.Exists(outputf)) File.Delete(outputf);
+                }
+                catch (Exception ex)
+                {
+                    Console.Error.WriteLine($"Warning: Failed to delete temporary output file '{outputf}': {ex.Message}");
+                }
             }
             return this.LauncherString;
         }

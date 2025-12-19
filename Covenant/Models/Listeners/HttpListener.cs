@@ -79,6 +79,8 @@ namespace Covenant.Models.Listeners
                 List<string> urls = new List<string>();
                 foreach (string ConnectAddress in this.ConnectAddresses)
                 {
+                    // Skip empty or whitespace addresses to prevent invalid URLs
+                    if (string.IsNullOrWhiteSpace(ConnectAddress)) continue;
                     string scheme = UseSSL ? "https://" : "http://";
                     urls.Add(scheme + ConnectAddress + ":" + this.ConnectPort);
                 }
@@ -111,15 +113,16 @@ namespace Covenant.Models.Listeners
             this.ProfileId = ProfileId;
             try
             {
+                var address = Dns.GetHostAddresses(Dns.GetHostName())
+                    .FirstOrDefault(A => A.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
                 this.ConnectAddresses = new List<string> {
-                    Dns.GetHostAddresses(Dns.GetHostName())
-                        .FirstOrDefault(A => A.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
-                        .ToString()
+                    address?.ToString() ?? "127.0.0.1"
                 };
             }
             catch (Exception)
             {
-                this.ConnectAddresses = new List<string> { "" };
+                // Use localhost as fallback instead of empty string
+                this.ConnectAddresses = new List<string> { "127.0.0.1" };
             }
         }
 
@@ -175,7 +178,8 @@ namespace Covenant.Models.Listeners
                     loggingConfig.AddRule(NLog.LogLevel.Warn, NLog.LogLevel.Fatal, "console");
                     loggingConfig.AddRule(NLog.LogLevel.Warn, NLog.LogLevel.Fatal, "file");
 
-                    var logger = NLogBuilder.ConfigureNLog(loggingConfig).GetCurrentClassLogger();
+                    NLog.LogManager.Configuration = loggingConfig;
+                    var logger = NLog.LogManager.GetCurrentClassLogger();
 
                     System.Threading.Tasks.Task task = host.RunAsync(cancellationTokenSource.Token);
                     // Don't love this, but we wait to see if the Listener throws an error on Startup
@@ -217,13 +221,17 @@ namespace Covenant.Models.Listeners
                                 {
                                     httpsOptions.ServerCertificate = new X509Certificate2(SSLCertificateFile, this.SSLCertificatePassword);
                                     httpsOptions.SslProtocols = System.Security.Authentication.SslProtocols.Tls12 |
-                                                                System.Security.Authentication.SslProtocols.Tls11 |
-                                                                System.Security.Authentication.SslProtocols.Tls;
+                                                                System.Security.Authentication.SslProtocols.Tls13;
                                 });
                             });
                         }
+                        else
+                        {
+                            // Explicit HTTP binding when SSL is disabled
+                            options.Listen(new IPEndPoint(IPAddress.Parse(this.BindAddress), this.BindPort));
+                        }
                     })
-                    .UseContentRoot(Directory.GetCurrentDirectory())
+                    .UseContentRoot(AppContext.BaseDirectory)
                     .ConfigureLogging((hostingContext, logging) =>
                     {
                         // logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
@@ -289,14 +297,14 @@ namespace Covenant.Models.Listeners
         protected override void OnModelCreating(ModelBuilder builder)
         {
             ValueComparer<IList<string>> stringIListComparer = new ValueComparer<IList<string>>(
-                (c1, c2) => c1.SequenceEqual(c1),
+                (c1, c2) => c1.SequenceEqual(c2),
                 c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
-                c => c
+                c => c.ToList()
             );
             ValueComparer<IList<APIModels.HttpProfileHeader>> httpProfileHeaderIListComparer = new ValueComparer<IList<APIModels.HttpProfileHeader>>(
-                (c1, c2) => c1.SequenceEqual(c1),
+                (c1, c2) => c1.SequenceEqual(c2),
                 c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
-                c => c
+                c => c.ToList()
             );
 
             builder.Entity<APIModels.HttpProfile>().Property(HP => HP.HttpUrls).HasConversion

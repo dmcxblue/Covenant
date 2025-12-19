@@ -30,11 +30,26 @@ namespace Covenant.Models.Launchers
             this.Base64ILByteString = Convert.ToBase64String(StagerAssembly);
             string code = CodeTemplate.Replace("{{GRUNT_IL_BYTE_STRING}}", this.Base64ILByteString);
 
-            List<Compiler.Reference> references = grunt.DotNetVersion == Common.DotNetVersion.Net35 ? Common.DefaultNet35References : Common.DefaultNet40References;
+            List<Compiler.Reference> references;
+            string installDllPath;
+            switch (grunt.DotNetVersion)
+            {
+                case Common.DotNetVersion.Net35:
+                    references = Common.DefaultNet35References;
+                    installDllPath = Common.CovenantAssemblyReferenceNet35Directory + "System.Configuration.Install.dll";
+                    break;
+                case Common.DotNetVersion.Net48:
+                    references = Common.DefaultNet48References;
+                    installDllPath = Common.CovenantAssemblyReferenceNet48Directory + "System.Configuration.Install.dll";
+                    break;
+                default: // Net45 and others
+                    references = Common.DefaultNet45References;
+                    installDllPath = Common.CovenantAssemblyReferenceNet45Directory + "System.Configuration.Install.dll";
+                    break;
+            }
             references.Add(new Compiler.Reference
             {
-                File = grunt.DotNetVersion == Common.DotNetVersion.Net35 ? Common.CovenantAssemblyReferenceNet35Directory + "System.Configuration.Install.dll" :
-                                                                                    Common.CovenantAssemblyReferenceNet40Directory + "System.Configuration.Install.dll",
+                File = installDllPath,
                 Framework = grunt.DotNetVersion,
                 Enabled = true
             });
@@ -56,7 +71,12 @@ namespace Covenant.Models.Launchers
             HttpListener httpListener = (HttpListener)listener;
             if (httpListener != null)
             {
-                Uri hostedLocation = new Uri(httpListener.Urls.First() + hostedFile.Path);
+                string firstUrl = httpListener.Urls.FirstOrDefault();
+                if (string.IsNullOrEmpty(firstUrl))
+                {
+                    return "";
+                }
+                Uri hostedLocation = new Uri(firstUrl + hostedFile.Path);
                 this.LauncherString = "InstallUtil.exe" + " " + "/U" + " " + hostedFile.Path.Split('/').Last();
                 return hostedLocation.ToString();
             }

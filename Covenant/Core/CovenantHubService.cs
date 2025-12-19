@@ -705,9 +705,9 @@ namespace Covenant.Core
             return _connection.InvokeAsync<IEnumerable<ReferenceAssembly>>("GetDefaultNet35ReferenceAssemblies");
         }
 
-        public Task<IEnumerable<ReferenceAssembly>> GetDefaultNet40ReferenceAssemblies()
+        public Task<IEnumerable<ReferenceAssembly>> GetDefaultNet45ReferenceAssemblies()
         {
-            return _connection.InvokeAsync<IEnumerable<ReferenceAssembly>>("GetDefaultNet40ReferenceAssemblies");
+            return _connection.InvokeAsync<IEnumerable<ReferenceAssembly>>("GetDefaultNet45ReferenceAssemblies");
         }
 
         public Task<string> GetDownloadContent(int eventId)
@@ -857,7 +857,7 @@ namespace Covenant.Core
 
         public Task<IEnumerable<GruntTask>> GetGruntTasksForGrunt(int gruntId)
         {
-            return _connection.InvokeAsync<IEnumerable<GruntTask>>("GetGruntTasks", gruntId);
+            return _connection.InvokeAsync<IEnumerable<GruntTask>>("GetGruntTasksForGrunt", gruntId);
         }
 
         public Task<CapturedHashCredential> GetHashCredential(int credentialId)

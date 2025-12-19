@@ -38,16 +38,17 @@ namespace Covenant.Models.Listeners
             this.ConnectPort = 7445;
             try
             {
+                var address = Dns.GetHostAddresses(Dns.GetHostName())
+                    .FirstOrDefault(A => A.AddressFamily == AddressFamily.InterNetwork);
                 this.ConnectAddresses = new List<string>
                 {
-                    Dns.GetHostAddresses(Dns.GetHostName())
-                        .FirstOrDefault(A => A.AddressFamily == AddressFamily.InterNetwork)
-                        .ToString()
+                    address?.ToString() ?? "127.0.0.1"
                 };
             }
             catch (SocketException)
             {
-                this.ConnectAddresses = new List<string> { "" };
+                // Use localhost as fallback instead of empty string
+                this.ConnectAddresses = new List<string> { "127.0.0.1" };
             }
         }
 

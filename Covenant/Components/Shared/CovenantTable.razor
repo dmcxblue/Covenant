@@ -116,17 +116,12 @@
     [Parameter]
     public RenderFragment ButtonTray { get; set; }
 
-    private List<TItem> _items;
     [Parameter]
-    public List<TItem> Items {
-        get { return _items; }
-        set
-        {
-            _items = value;
-            _ = SearchDebounced(_searchTerm);
-        }
-    }
+    public List<TItem> Items { get; set; }
+
     public List<TItem> FilteredItems { get; set; }
+
+    private List<TItem> _previousItems;
 
     [Parameter]
     public EventCallback<List<TItem>> ItemsChanged { get; set; }
@@ -177,11 +172,21 @@
     protected override void OnInitialized()
     {
         this.FilteredItems = this.Items.ToList();
+        this._previousItems = this.Items;
         if (!this.IsPaginated)
         {
             this.PageLength = this.FilteredItems.Count();
         }
         this.CurrentPage = 0;
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (this.Items != this._previousItems)
+        {
+            this._previousItems = this.Items;
+            _ = SearchDebounced(_searchTerm);
+        }
     }
 
     private void OnNavigateToFront()

@@ -2,9 +2,9 @@
 
 @using System.IO
 @using System.Threading
-@using System.Threading.Tasks 
+@using System.Threading.Tasks
 @using Microsoft.JSInterop
-@using BlazorInputFile
+@using Microsoft.AspNetCore.Components.Forms
 @using Covenant.Core
 @using Covenant.Models.Grunts
 @inject IJSRuntime IJSRuntime
@@ -87,7 +87,7 @@
     }
 
     private string ErrorMessage { get; set; }
-    private async Task OnUpload(IFileListEntry[] files)
+    private async Task OnUpload(InputFileChangeEventArgs e)
     {
         try
         {
@@ -95,20 +95,21 @@
             this.UploadInProgress = true;
             this.StateHasChanged();
             this.UploadedFiles = new List<MemoryStream>();
-            for (int i = 0; i < files.Length; i++)
+            var files = e.GetMultipleFiles();
+            for (int i = 0; i < files.Count; i++)
             {
                 if (files[i] != null)
                 {
                     MemoryStream ms = new MemoryStream();
-                    await files[i].Data.CopyToAsync(ms);
+                    await files[i].OpenReadStream(maxAllowedSize: 100 * 1024 * 1024).CopyToAsync(ms);
                     this.UploadedFiles.Add(ms);
                     this.OnRead(this.UploadedFiles);
                 }
             }
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            this.ErrorMessage = e.Message;
+            this.ErrorMessage = ex.Message;
         }
         this.UploadInProgress = false;
         this.StateHasChanged();

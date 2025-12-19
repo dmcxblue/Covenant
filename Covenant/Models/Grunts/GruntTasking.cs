@@ -71,7 +71,27 @@ namespace Covenant.Models.Grunts
         Connect,
         Disconnect,
         Tasks,
-        TaskKill
+        TaskKill,
+        Shell,
+        ShellCmd,
+        PowerShell,
+        WhoAmI,
+        Pwd,
+        Cd,
+        ListDirectory,
+        ReadFile,
+        WriteFile,
+        GetHostname,
+        ProcessList,
+        Kill,
+        // New file operations
+        CreateDirectory,
+        Delete,
+        Copy,
+        Download,
+        Upload,
+        Screenshot,
+        ExecuteAssembly
     }
 
     public class GruntTasking
@@ -87,7 +107,7 @@ namespace Covenant.Models.Grunts
         public int GruntTaskId { get; set; }
         public GruntTask GruntTask { get; set; }
 
-        public GruntTaskingType Type { get; set; } = GruntTaskingType.Assembly;
+        public GruntTaskingType Type { get; set; } = GruntTaskingType.ExecuteAssembly;
         public List<string> Parameters { get; set; } = new List<string>();
 
         public GruntTaskingStatus Status { get; set; } = GruntTaskingStatus.Uninitialized;

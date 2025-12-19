@@ -15,7 +15,7 @@ namespace Covenant.Models.Launchers
         {
             this.Name = "Wscript";
             this.Type = LauncherType.Wscript;
-            this.Description = "Uses wscript.exe to launch a Grunt using a COM activated Delegate and ActiveXObjects (ala DotNetToJScript). Please note that DotNetToJScript-based launchers may not work on Windows 10 and Windows Server 2016.";
+            this.Description = "Uses wscript.exe to launch a Grunt using Activation Context (ActCtx) to instantiate .NET objects. This technique bypasses COM restrictions on newer Windows versions.";
             this.ScriptType = ScriptletType.Plain;
             this.OutputKind = OutputKind.DynamicallyLinkedLibrary;
             this.CompressStager = false;
@@ -23,7 +23,8 @@ namespace Covenant.Models.Launchers
 
         protected override string GetLauncher()
         {
-            string launcher = "wscript" + " " + "file.js";
+            string ext = this.ScriptLanguage == ScriptingLanguage.JScript ? ".js" : ".vbs";
+            string launcher = "wscript" + " " + "file" + ext;
             this.LauncherString = launcher;
             return this.LauncherString;
         }

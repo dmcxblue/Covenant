@@ -106,23 +106,19 @@
 </EditForm>
 
 @code {
-    private ImplantTemplate _ImplantTemplate;
+    private int _previousImplantTemplateId;
+
     [Parameter]
-    public ImplantTemplate ImplantTemplate
+    public ImplantTemplate ImplantTemplate { get; set; }
+
+    protected override void OnParametersSet()
     {
-        get
+        if (ImplantTemplate != null && ImplantTemplate.Id != _previousImplantTemplateId)
         {
-            return _ImplantTemplate;
-        }
-        set
-        {
-            if (value.Id > 0)
+            _previousImplantTemplateId = ImplantTemplate.Id;
+            if (ImplantTemplate.Id > 0)
             {
-                _ImplantTemplate = Service.GetImplantTemplate(value.Id).WaitResult();
-            }
-            else
-            {
-                _ImplantTemplate = value;
+                ImplantTemplate = Service.GetImplantTemplate(ImplantTemplate.Id).WaitResult();
             }
         }
     }

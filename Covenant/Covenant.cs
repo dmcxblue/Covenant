@@ -119,12 +119,18 @@ namespace Covenant
                     var listenerTokenSources = services.GetRequiredService<ConcurrentDictionary<int, CancellationTokenSource>>();
                     context.Database.EnsureCreated();
                     DbInitializer.Initialize(service, context, roleManager, listenerTokenSources).Wait();
-                    CovenantUser serviceUser = new CovenantUser { UserName = "ServiceUser" };
-                    if (!context.Users.Any())
+                    // Try to find existing ServiceUser, or create if doesn't exist
+                    CovenantUser serviceUser = userManager.FindByNameAsync("ServiceUser").GetAwaiter().GetResult();
+                    if (serviceUser == null)
                     {
+                        serviceUser = new CovenantUser { UserName = "ServiceUser" };
                         string serviceUserPassword = Utilities.CreateSecretPassword() + "A";
                         userManager.CreateAsync(serviceUser, serviceUserPassword).Wait();
                         userManager.AddToRoleAsync(serviceUser, "ServiceUser").Wait();
+                    }
+                    // Create admin user if no regular users exist (excluding ServiceUser)
+                    if (!context.Users.Any(u => u.UserName != "ServiceUser"))
+                    {
                         if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
                         {
                             CovenantUser user = new CovenantUser { UserName = username };
@@ -161,7 +167,8 @@ namespace Covenant
                 loggingConfig.AddRule(NLog.LogLevel.Info, NLog.LogLevel.Fatal, "console");
                 loggingConfig.AddRule(NLog.LogLevel.Info, NLog.LogLevel.Fatal, "file");
 
-                var logger = NLogBuilder.ConfigureNLog(loggingConfig).GetCurrentClassLogger();
+                NLog.LogManager.Configuration = loggingConfig;
+                var logger = NLog.LogManager.GetCurrentClassLogger();
                 try
                 {
                     logger.Debug("Starting Covenant API");
@@ -200,23 +207,29 @@ namespace Covenant
                             {
                                 Console.WriteLine("Creating cert...");
                                 X509Certificate2 certificate = Utilities.CreateSelfSignedCertificate(CovenantEndpoint.Address, "CN=Covenant");
-                                File.WriteAllBytes(Common.CovenantPrivateCertFile, certificate.Export(X509ContentType.Pfx));
+                                // Export with empty password for .NET 8 / OpenSSL compatibility
+                                File.WriteAllBytes(Common.CovenantPrivateCertFile, certificate.Export(X509ContentType.Pfx, ""));
                                 File.WriteAllBytes(Common.CovenantPublicCertFile, certificate.Export(X509ContentType.Cert));
                             }
                             try
                             {
-                                httpsOptions.ServerCertificate = new X509Certificate2(Common.CovenantPrivateCertFile);
+                                // Use EphemeralKeySet for Linux/OpenSSL compatibility with .NET 8
+                                httpsOptions.ServerCertificate = new X509Certificate2(
+                                    Common.CovenantPrivateCertFile,
+                                    "",
+                                    X509KeyStorageFlags.EphemeralKeySet
+                                );
                             }
-                            catch (CryptographicException)
+                            catch (CryptographicException ex)
                             {
-                                Console.Error.WriteLine("Error importing Covenant certificate.");
+                                Console.Error.WriteLine($"Error importing Covenant certificate: {ex.Message}");
                             }
                             httpsOptions.SslProtocols = SslProtocols.Tls12;
                         });
                     });
                     // options.Limits.MaxRequestBodySize = int.MaxValue;
                 })
-                .UseContentRoot(Directory.GetCurrentDirectory())
+                .UseContentRoot(AppContext.BaseDirectory)
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
                     string appsettingscontents = File.ReadAllText(Common.CovenantAppSettingsFile);

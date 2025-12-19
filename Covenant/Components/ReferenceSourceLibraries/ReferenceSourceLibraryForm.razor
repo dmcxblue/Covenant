@@ -109,23 +109,19 @@
 </EditForm>
 
 @code {
-    private ReferenceSourceLibrary _ReferenceSourceLibrary;
+    private int _previousReferenceSourceLibraryId;
+
     [Parameter]
-    public ReferenceSourceLibrary ReferenceSourceLibrary
+    public ReferenceSourceLibrary ReferenceSourceLibrary { get; set; }
+
+    protected override void OnParametersSet()
     {
-        get
+        if (ReferenceSourceLibrary != null && ReferenceSourceLibrary.Id != _previousReferenceSourceLibraryId)
         {
-            return _ReferenceSourceLibrary;
-        }
-        set
-        {
-            if (value != null && value.Id > 0)
+            _previousReferenceSourceLibraryId = ReferenceSourceLibrary.Id;
+            if (ReferenceSourceLibrary.Id > 0)
             {
-                _ReferenceSourceLibrary = Service.GetReferenceSourceLibrary(value.Id).WaitResult();
-            }
-            else
-            {
-                _ReferenceSourceLibrary = value;
+                ReferenceSourceLibrary = Service.GetReferenceSourceLibrary(ReferenceSourceLibrary.Id).WaitResult();
             }
         }
     }

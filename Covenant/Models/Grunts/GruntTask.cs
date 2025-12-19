@@ -32,11 +32,11 @@ namespace Covenant.Models.Grunts
         public string Description { get; set; } = "A generic GruntTask.";
         public string Help { get; set; }
         public ImplantLanguage Language { get; set; } = ImplantLanguage.CSharp;
-        public IList<Common.DotNetVersion> CompatibleDotNetVersions { get; set; } = new List<Common.DotNetVersion> { Common.DotNetVersion.Net35, Common.DotNetVersion.Net40 };
+        public IList<Common.DotNetVersion> CompatibleDotNetVersions { get; set; } = new List<Common.DotNetVersion> { Common.DotNetVersion.Net35, Common.DotNetVersion.Net45, Common.DotNetVersion.Net48 };
 
         public string Code { get; set; } = "";
         public bool Compiled { get; set; } = false;
-        public GruntTaskingType TaskingType { get; set; } = GruntTaskingType.Assembly;
+        public GruntTaskingType TaskingType { get; set; } = GruntTaskingType.ExecuteAssembly;
 
         private List<GruntTaskReferenceSourceLibrary> GruntTaskReferenceSourceLibraries { get; set; } = new List<GruntTaskReferenceSourceLibrary>();
         private List<GruntTaskReferenceAssembly> GruntTaskReferenceAssemblies { get; set; } = new List<GruntTaskReferenceAssembly>();
@@ -192,7 +192,12 @@ namespace Covenant.Models.Grunts
 
         public byte[] GetCompressedILAssembly40()
         {
-            return File.ReadAllBytes(Common.CovenantTaskCSharpCompiledNet40Directory + this.Name + ".compiled");
+            return File.ReadAllBytes(Common.CovenantTaskCSharpCompiledNet45Directory + this.Name + ".compiled");
+        }
+
+        public byte[] GetCompressedILAssembly48()
+        {
+            return File.ReadAllBytes(Common.CovenantTaskCSharpCompiledNet48Directory + this.Name + ".compiled");
         }
 
         public void Compile(ImplantTemplate template, Compiler.RuntimeIdentifier runtimeIdentifier = Compiler.RuntimeIdentifier.win_x64)
@@ -205,13 +210,17 @@ namespace Covenant.Models.Grunts
                     {
                         this.CompileDotNet35();
                     }
-                    else if (version == Common.DotNetVersion.Net40)
+                    else if (version == Common.DotNetVersion.Net45)
                     {
-                        this.CompileDotNet40();
+                        this.CompileDotNet45();
                     }
                     else if (version == Common.DotNetVersion.NetCore31)
                     {
                         this.CompileDotNetCore(template, runtimeIdentifier);
+                    }
+                    else if (version == Common.DotNetVersion.Net48)
+                    {
+                        this.CompileDotNet48();
                     }
                 }
             }
@@ -285,7 +294,7 @@ namespace Covenant.Models.Grunts
             );
         }
 
-        private void CompileDotNet40()
+        private void CompileDotNet45()
         {
             List<Compiler.EmbeddedResource> resources = this.EmbeddedResources.Select(ER =>
             {
@@ -316,26 +325,93 @@ namespace Covenant.Models.Grunts
             this.ReferenceSourceLibraries.ToList().ForEach(RSL =>
             {
                 references40.AddRange(
-                    RSL.ReferenceAssemblies.Where(RA => RA.DotNetVersion == Common.DotNetVersion.Net40).Select(RA =>
+                    RSL.ReferenceAssemblies.Where(RA => RA.DotNetVersion == Common.DotNetVersion.Net45).Select(RA =>
                     {
-                        return new Compiler.Reference { File = Common.CovenantAssemblyReferenceDirectory + RA.Location, Framework = Common.DotNetVersion.Net40, Enabled = true };
+                        return new Compiler.Reference { File = Common.CovenantAssemblyReferenceDirectory + RA.Location, Framework = Common.DotNetVersion.Net45, Enabled = true };
                     })
                 );
             });
             references40.AddRange(
-                this.ReferenceAssemblies.Where(RA => RA.DotNetVersion == Common.DotNetVersion.Net40).Select(RA =>
+                this.ReferenceAssemblies.Where(RA => RA.DotNetVersion == Common.DotNetVersion.Net45).Select(RA =>
                 {
-                    return new Compiler.Reference { File = Common.CovenantAssemblyReferenceDirectory + RA.Location, Framework = Common.DotNetVersion.Net40, Enabled = true };
+                    return new Compiler.Reference { File = Common.CovenantAssemblyReferenceDirectory + RA.Location, Framework = Common.DotNetVersion.Net45, Enabled = true };
                 })
             );
-            File.WriteAllBytes(Common.CovenantTaskCSharpCompiledNet40Directory + this.Name + ".compiled",
+            File.WriteAllBytes(Common.CovenantTaskCSharpCompiledNet45Directory + this.Name + ".compiled",
                 Utilities.Compress(Compiler.Compile(new Compiler.CsharpFrameworkCompilationRequest
                 {
                     Language = this.Language,
                     Source = this.Code,
                     SourceDirectories = this.ReferenceSourceLibraries.Select(RSL => Common.CovenantReferenceSourceLibraries + RSL.Location).ToList(),
-                    TargetDotNetVersion = Common.DotNetVersion.Net40,
+                    TargetDotNetVersion = Common.DotNetVersion.Net45,
                     References = references40,
+                    EmbeddedResources = resources,
+                    UnsafeCompile = this.UnsafeCompile,
+                    Confuse = true,
+                    // TODO: Fix optimization to work with GhostPack
+                    Optimize = !this.ReferenceSourceLibraries.Select(RSL => RSL.Name).Contains("Rubeus") &&
+                           !this.ReferenceSourceLibraries.Select(RSL => RSL.Name).Contains("Seatbelt") &&
+                           !this.ReferenceSourceLibraries.Select(RSL => RSL.Name).Contains("SharpDPAPI") &&
+                           !this.ReferenceSourceLibraries.Select(RSL => RSL.Name).Contains("SharpDump") &&
+                           !this.ReferenceSourceLibraries.Select(RSL => RSL.Name).Contains("SharpUp") &&
+                           !this.ReferenceSourceLibraries.Select(RSL => RSL.Name).Contains("SharpWMI") &&
+                           !this.ReferenceSourceLibraries.Select(RSL => RSL.Name).Contains("SharpSC") &&
+                           !this.Name.Contains("inject", StringComparison.CurrentCultureIgnoreCase)
+                }))
+            );
+        }
+
+        private void CompileDotNet48()
+        {
+            List<Compiler.EmbeddedResource> resources = this.EmbeddedResources.Select(ER =>
+            {
+                return new Compiler.EmbeddedResource
+                {
+                    Name = ER.Name,
+                    File = Common.CovenantEmbeddedResourcesDirectory + ER.Location,
+                    Platform = Platform.X64,
+                    Enabled = true
+                };
+            }).ToList();
+            this.ReferenceSourceLibraries.ToList().ForEach(RSL =>
+            {
+                resources.AddRange(
+                    RSL.EmbeddedResources.Select(ER =>
+                    {
+                        return new Compiler.EmbeddedResource
+                        {
+                            Name = ER.Name,
+                            File = Common.CovenantEmbeddedResourcesDirectory + ER.Location,
+                            Platform = Platform.X64,
+                            Enabled = true
+                        };
+                    })
+                );
+            });
+            List<Compiler.Reference> references48 = new List<Compiler.Reference>();
+            this.ReferenceSourceLibraries.ToList().ForEach(RSL =>
+            {
+                references48.AddRange(
+                    RSL.ReferenceAssemblies.Where(RA => RA.DotNetVersion == Common.DotNetVersion.Net48).Select(RA =>
+                    {
+                        return new Compiler.Reference { File = Common.CovenantAssemblyReferenceDirectory + RA.Location, Framework = Common.DotNetVersion.Net48, Enabled = true };
+                    })
+                );
+            });
+            references48.AddRange(
+                this.ReferenceAssemblies.Where(RA => RA.DotNetVersion == Common.DotNetVersion.Net48).Select(RA =>
+                {
+                    return new Compiler.Reference { File = Common.CovenantAssemblyReferenceDirectory + RA.Location, Framework = Common.DotNetVersion.Net48, Enabled = true };
+                })
+            );
+            File.WriteAllBytes(Common.CovenantTaskCSharpCompiledNet48Directory + this.Name + ".compiled",
+                Utilities.Compress(Compiler.Compile(new Compiler.CsharpFrameworkCompilationRequest
+                {
+                    Language = this.Language,
+                    Source = this.Code,
+                    SourceDirectories = this.ReferenceSourceLibraries.Select(RSL => Common.CovenantReferenceSourceLibraries + RSL.Location).ToList(),
+                    TargetDotNetVersion = Common.DotNetVersion.Net48,
+                    References = references48,
                     EmbeddedResources = resources,
                     UnsafeCompile = this.UnsafeCompile,
                     Confuse = true,
@@ -410,7 +486,7 @@ namespace Covenant.Models.Grunts
         public ImplantLanguage Language { get; set; }
         public IList<Common.DotNetVersion> CompatibleDotNetVersions { get; set; } = new List<Common.DotNetVersion>();
         public string Code { get; set; } = "";
-        public GruntTaskingType TaskingType { get; set; } = GruntTaskingType.Assembly;
+        public GruntTaskingType TaskingType { get; set; } = GruntTaskingType.ExecuteAssembly;
         public bool UnsafeCompile { get; set; } = false;
         public bool TokenTask { get; set; } = false;
         public List<SerializedGruntTaskOption> Options { get; set; } = new List<SerializedGruntTaskOption>();

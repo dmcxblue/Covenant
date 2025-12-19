@@ -19,7 +19,7 @@ namespace Covenant.Models.Launchers
         {
             this.Name = "Regsvr32";
             this.Type = LauncherType.Regsvr32;
-            this.Description = "Uses regsvr32.exe to launch a Grunt using a COM activated Delegate and ActiveXObjects (ala DotNetToJScript). Please note that DotNetToJScript-based launchers may not work on Windows 10 and Windows Server 2016.";
+            this.Description = "Uses regsvr32.exe to launch a Grunt using Activation Context (ActCtx) to instantiate .NET objects. This technique bypasses COM restrictions on newer Windows versions.";
             this.ScriptType = ScriptletType.Scriptlet;
             this.OutputKind = OutputKind.DynamicallyLinkedLibrary;
             this.CompressStager = false;

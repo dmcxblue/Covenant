@@ -162,12 +162,33 @@
             <ScriptletLauncherFormPartial @bind-Launcher="Launcher" />
             break;
     }
+    @if (!string.IsNullOrEmpty(ErrorMessage))
+    {
+        <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+            <strong>Error:</strong> @ErrorMessage
+            <button type="button" class="close" @onclick="() => ErrorMessage = string.Empty">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+    <div class="form-row mb-3">
+        <div class="form-group col-md-6">
+            <label for="OutputFileName">Output Filename (optional)</label>
+            <input id="OutputFileName" name="OutputFileName" @bind="CustomFileName" class="form-control" placeholder="@GetDefaultFilenameHint()">
+        </div>
+    </div>
     <div class="btn-group" role="group">
-        <button type="submit" class="btn btn-primary mr-5" id="generate">
-            <span class="fe fe-zap"></span> Generate
-        </button>
-        <button type="button" @onclick="OnDownload" class="btn btn-outline-primary ml-5" id="download">
-            <span class="fe fe-download"></span> Download
+        <button type="button" @onclick="OnGenerateAndDownload" class="btn btn-primary" id="generate-download" disabled="@IsGenerating">
+            @if (IsGenerating)
+            {
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                <span> Generating...</span>
+            }
+            else
+            {
+                <span class="fe fe-zap"></span>
+                <span> Generate &amp; Save</span>
+            }
         </button>
     </div>
 </EditForm>
@@ -178,6 +199,10 @@
 
     [Parameter]
     public EventCallback<Launcher> OnGenerate { get; set; }
+
+    private string CustomFileName { get; set; } = "";
+    private bool IsGenerating { get; set; } = false;
+    private string ErrorMessage { get; set; } = "";
 
     private IEnumerable<Listener> _ActiveListeners;
     private IEnumerable<Listener> ActiveListeners
@@ -290,7 +315,7 @@
 
     private async Task OnDownload()
     {
-        string filename = (await Service.GetImplantTemplate(this.Launcher.ImplantTemplateId)).Name ?? "GruntStager";
+        string defaultFilename = (await Service.GetImplantTemplate(this.Launcher.ImplantTemplateId)).Name ?? "GruntStager";
         string fileext = ".exe";
         string mediatype = "";
         string content = "";
@@ -338,16 +363,123 @@
                 content = Convert.ToBase64String(Common.CovenantEncoding.GetBytes(((Regsvr32Launcher)this.Launcher).DiskCode));
                 break;
             case LauncherType.Wmic:
-                fileext = "xsl";
+                fileext = ".xsl";
                 mediatype = MediaTypeNames.Text.Plain;
                 content = Convert.ToBase64String(Common.CovenantEncoding.GetBytes(((WmicLauncher)this.Launcher).DiskCode));
                 break;
             case LauncherType.Wscript:
-                fileext = "GruntStager.js";
+                fileext = ".js";
                 mediatype = MediaTypeNames.Text.Plain;
                 content = Convert.ToBase64String(Common.CovenantEncoding.GetBytes(((WscriptLauncher)this.Launcher).DiskCode));
                 break;
         }
-        await IJSRuntime.InvokeAsync<string>("DownloadFile", filename + fileext, mediatype, content);
+        // Use custom filename if provided, otherwise use default with extension
+        string filename = string.IsNullOrWhiteSpace(CustomFileName) ? defaultFilename + fileext : CustomFileName;
+        // Ensure the filename has the correct extension if custom name doesn't include one
+        if (!string.IsNullOrWhiteSpace(CustomFileName) && !CustomFileName.Contains("."))
+        {
+            filename = CustomFileName + fileext;
+        }
+        await IJSRuntime.InvokeAsync<string>("DownloadFile", filename, mediatype, content);
+    }
+
+    private string GetDefaultFilenameHint()
+    {
+        return Launcher.Type switch
+        {
+            LauncherType.Binary => "e.g., update.exe",
+            LauncherType.ShellCode => "e.g., payload.bin",
+            LauncherType.Cscript => "e.g., script.js",
+            LauncherType.InstallUtil => "e.g., library.dll",
+            LauncherType.MSBuild => "e.g., build.xml",
+            LauncherType.Mshta => "e.g., app.hta",
+            LauncherType.PowerShell => "e.g., script.ps1",
+            LauncherType.Regsvr32 => "e.g., script.sct",
+            LauncherType.Wmic => "e.g., style.xsl",
+            LauncherType.Wscript => "e.g., script.js",
+            _ => "e.g., output"
+        };
+    }
+
+    private async Task OnGenerateAndDownload()
+    {
+        if (IsGenerating) return;
+        IsGenerating = true;
+        ErrorMessage = string.Empty;
+        StateHasChanged();
+
+        try
+        {
+            // Generate the launcher based on type
+            switch (Launcher.Name)
+            {
+                case "Binary":
+                    var binaryLauncher = (BinaryLauncher)Launcher;
+                    await Service.EditBinaryLauncher(binaryLauncher);
+                    Launcher = await Service.GenerateBinaryLauncher();
+                    break;
+                case "ShellCode":
+                    var shellcodeLauncher = (ShellCodeLauncher)Launcher;
+                    await Service.EditShellCodeLauncher(shellcodeLauncher);
+                    Launcher = await Service.GenerateShellCodeLauncher();
+                    break;
+                case "Cscript":
+                    var cscriptLauncher = (CscriptLauncher)Launcher;
+                    await Service.EditCscriptLauncher(cscriptLauncher);
+                    Launcher = await Service.GenerateCscriptLauncher();
+                    break;
+                case "InstallUtil":
+                    var installUtilLauncher = (InstallUtilLauncher)Launcher;
+                    await Service.EditInstallUtilLauncher(installUtilLauncher);
+                    Launcher = await Service.GenerateInstallUtilLauncher();
+                    break;
+                case "MSBuild":
+                    var msBuildLauncher = (MSBuildLauncher)Launcher;
+                    await Service.EditMSBuildLauncher(msBuildLauncher);
+                    Launcher = await Service.GenerateMSBuildLauncher();
+                    break;
+                case "Mshta":
+                    var mshtaLauncher = (MshtaLauncher)Launcher;
+                    await Service.EditMshtaLauncher(mshtaLauncher);
+                    Launcher = await Service.GenerateMshtaLauncher();
+                    break;
+                case "PowerShell":
+                    var powerShellLauncher = (PowerShellLauncher)Launcher;
+                    await Service.EditPowerShellLauncher(powerShellLauncher);
+                    Launcher = await Service.GeneratePowerShellLauncher();
+                    break;
+                case "Regsvr32":
+                    var regsvr32Launcher = (Regsvr32Launcher)Launcher;
+                    await Service.EditRegsvr32Launcher(regsvr32Launcher);
+                    Launcher = await Service.GenerateRegsvr32Launcher();
+                    break;
+                case "Wmic":
+                    var wmicLauncher = (WmicLauncher)Launcher;
+                    await Service.EditWmicLauncher(wmicLauncher);
+                    Launcher = await Service.GenerateWmicLauncher();
+                    break;
+                case "Wscript":
+                    var wscriptLauncher = (WscriptLauncher)Launcher;
+                    await Service.EditWscriptLauncher(wscriptLauncher);
+                    Launcher = await Service.GenerateWscriptLauncher();
+                    break;
+            }
+
+            // Now download it
+            await OnDownload();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+            if (ex.InnerException != null)
+            {
+                ErrorMessage += $" - {ex.InnerException.Message}";
+            }
+        }
+        finally
+        {
+            IsGenerating = false;
+            StateHasChanged();
+        }
     }
 }

@@ -6,8 +6,7 @@
 
 @using System.IO
 @using Microsoft.JSInterop
-
-@using BlazorInputFile
+@using Microsoft.AspNetCore.Components.Forms
 @using YamlDotNet.Serialization
 
 @using Covenant.Core
@@ -139,24 +138,24 @@
 
     private string ErrorMessage { get; set; }
     private List<GruntTask> ImportedTasks { get; set; } = null;
-    private async Task OnUploadImport(IFileListEntry[] files)
+    private async Task OnUploadImport(InputFileChangeEventArgs e)
     {
         try
         {
-            IFileListEntry file = files.FirstOrDefault();
+            var file = e.File;
             if (file != null)
             {
                 MemoryStream ms = new MemoryStream();
-                await file.Data.CopyToAsync(ms);
+                await file.OpenReadStream(maxAllowedSize: 50 * 1024 * 1024).CopyToAsync(ms);
                 string yaml = Common.CovenantEncoding.GetString(ms.ToArray());
                 IDeserializer deserializer = new DeserializerBuilder().Build();
                 List<SerializedGruntTask> serialized = deserializer.Deserialize<List<SerializedGruntTask>>(yaml);
                 this.ImportedTasks = serialized.Select(S => new GruntTask().FromSerializedGruntTask(S)).ToList();
             }
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            this.ErrorMessage = e.Message;
+            this.ErrorMessage = ex.Message;
             this.StateHasChanged();
         }
     }

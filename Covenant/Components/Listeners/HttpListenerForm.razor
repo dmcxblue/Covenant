@@ -3,8 +3,6 @@
 @using System.Linq
 @using Covenant.Models.Listeners
 
-@using BlazorInputFile
-
 <EditForm Model="Listener" OnValidSubmit="OnFormSubmit">
     <DataAnnotationsValidator />
     <div class="form-group">
@@ -46,12 +44,15 @@
     @for (int i = 0; i < Listener.ConnectAddresses.Count; i++)
     {
         int number = i;
+        string connectAddr = Listener.ConnectAddresses[number];
+        string url = string.IsNullOrWhiteSpace(connectAddr) ? "" :
+            (Listener.UseSSL ? "https://" : "http://") + connectAddr + ":" + Listener.ConnectPort;
         <div class="form-row">
             <div class="form-group col-md-4">
                 <input id=@("ConnectAddresses_" + number + "_") name=@("ConnectAddresses[" + number + "]") @bind-value="Listener.ConnectAddresses[number]" @bind-value:event="oninput" disabled="@Disabled" class="form-control">
             </div>
             <div class="form-group col-md-4">
-                <input id="Urls_i_" name="Urls[i]" value="@Listener.Urls[number]" class="form-control" readonly>
+                <input id="Urls_i_" name="Urls[i]" value="@url" class="form-control" readonly>
             </div>
             @if (number != 0)
             {
@@ -153,14 +154,14 @@
         }
     }
 
-    private async Task FileUpload(IFileListEntry[] files)
+    private async Task FileUpload(InputFileChangeEventArgs e)
     {
-        IFileListEntry file = files.FirstOrDefault();
+        var file = e.File;
         if (file != null)
         {
             using (MemoryStream ms = new MemoryStream())
             {
-                await file.Data.CopyToAsync(ms);
+                await file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024).CopyToAsync(ms);
                 Listener.SSLCertificate = Convert.ToBase64String(ms.ToArray());
             }
         }

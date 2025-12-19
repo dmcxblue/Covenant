@@ -2,7 +2,6 @@
 @using Microsoft.JSInterop
 @using Microsoft.AspNetCore.Components.Forms
 @using Covenant.Models.Listeners
-@using BlazorInputFile
 @inject IJSRuntime IJSRuntime
 
 <EditForm Model="HostedFile" OnValidSubmit="OnFormSubmit">
@@ -42,14 +41,14 @@
     [Parameter]
     public RenderFragment ChildContent { get; set; }
 
-    private async Task FileUpload(IFileListEntry[] files)
+    private async Task FileUpload(InputFileChangeEventArgs e)
     {
-        IFileListEntry file = files.FirstOrDefault();
+        var file = e.File;
         if (file != null)
         {
             using (MemoryStream ms = new MemoryStream())
             {
-                await file.Data.CopyToAsync(ms);
+                await file.OpenReadStream(maxAllowedSize: 100 * 1024 * 1024).CopyToAsync(ms);
                 HostedFile.Content = Convert.ToBase64String(ms.ToArray());
             }
         }

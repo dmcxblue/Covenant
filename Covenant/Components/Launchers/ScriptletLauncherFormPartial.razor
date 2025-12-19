@@ -6,7 +6,7 @@
 <div class="form-row">
     <div class="form-group col-md-3">
         <label for="ScriptLanguage">ScriptLanguage</label><br />
-        <select id="ScriptLanguage" name="ScriptLanguage" value="@ScriptletLauncher" @onchange="(e => OnScriptLanguageChanged(e))" class="selectpicker show-menu-arrow" data-dropup-auto="false" data-width="auto">
+        <select id="ScriptLanguage" name="ScriptLanguage" value="@((int)ScriptletLauncher.ScriptLanguage)" @onchange="(e => OnScriptLanguageChanged(e))" class="selectpicker show-menu-arrow" data-dropup-auto="false" data-width="auto">
             @foreach (var n in Enum.GetNames(typeof(ScriptingLanguage)))
             {
                 <option value="@(((Enum)typeof(ScriptingLanguage).GetField(n).GetValue(null)).ToString("d"))">@n</option>

@@ -121,7 +121,7 @@ namespace Covenant.Core
     {
         Task<IEnumerable<ReferenceAssembly>> GetReferenceAssemblies();
         Task<IEnumerable<ReferenceAssembly>> GetDefaultNet35ReferenceAssemblies();
-        Task<IEnumerable<ReferenceAssembly>> GetDefaultNet40ReferenceAssemblies();
+        Task<IEnumerable<ReferenceAssembly>> GetDefaultNet45ReferenceAssemblies();
         Task<ReferenceAssembly> GetReferenceAssembly(int id);
         Task<ReferenceAssembly> GetReferenceAssemblyByName(string name, Common.DotNetVersion version);
         Task<ReferenceAssembly> CreateReferenceAssembly(ReferenceAssembly assembly);
@@ -1510,13 +1510,20 @@ namespace Covenant.Core
 
         private byte[] CompileGruntCode(string CodeTemplate, ImplantTemplate template, Grunt grunt, Listener listener, Profile profile, Launcher launcher)
         {
-            return CompileGruntCode(CodeTemplate, template, grunt, listener, profile, launcher.OutputKind, launcher.CompressStager, launcher.RuntimeIdentifier);
+            // Use Mono compiler for scriptlet launchers (Cscript, Wscript, Mshta, Regsvr32, Wmic)
+            // as it generates more compatible assemblies for JScript/VBScript execution contexts
+            bool useMonoForScriptlet = launcher.Type == LauncherType.Cscript ||
+                                       launcher.Type == LauncherType.Wscript ||
+                                       launcher.Type == LauncherType.Mshta ||
+                                       launcher.Type == LauncherType.Regsvr32 ||
+                                       launcher.Type == LauncherType.Wmic;
+            return CompileGruntCode(CodeTemplate, template, grunt, listener, profile, launcher.OutputKind, launcher.CompressStager, launcher.RuntimeIdentifier, useMonoForScriptlet);
         }
 
-        private byte[] CompileGruntCode(string CodeTemplate, ImplantTemplate template, Grunt grunt, Listener listener, Profile profile, OutputKind outputKind = OutputKind.DynamicallyLinkedLibrary, bool Compress = false, Compiler.RuntimeIdentifier runtimeIdentifier = Compiler.RuntimeIdentifier.win_x64)
+        private byte[] CompileGruntCode(string CodeTemplate, ImplantTemplate template, Grunt grunt, Listener listener, Profile profile, OutputKind outputKind = OutputKind.DynamicallyLinkedLibrary, bool Compress = false, Compiler.RuntimeIdentifier runtimeIdentifier = Compiler.RuntimeIdentifier.win_x64, bool useMonoCompiler = false)
         {
             byte[] ILBytes = null;
-            if (grunt.DotNetVersion == Common.DotNetVersion.Net35 || grunt.DotNetVersion == Common.DotNetVersion.Net40)
+            if (grunt.DotNetVersion == Common.DotNetVersion.Net35 || grunt.DotNetVersion == Common.DotNetVersion.Net45 || grunt.DotNetVersion == Common.DotNetVersion.Net48)
             {
                 List<Compiler.Reference> references = null;
                 switch (grunt.DotNetVersion)
@@ -1524,8 +1531,11 @@ namespace Covenant.Core
                     case Common.DotNetVersion.Net35:
                         references = Common.DefaultNet35References;
                         break;
-                    case Common.DotNetVersion.Net40:
-                        references = Common.DefaultNet40References;
+                    case Common.DotNetVersion.Net45:
+                        references = Common.DefaultNet45References;
+                        break;
+                    case Common.DotNetVersion.Net48:
+                        references = Common.DefaultNet48References;
                         break;
                 }
                 ILBytes = Compiler.Compile(new Compiler.CsharpFrameworkCompilationRequest
@@ -1534,7 +1544,8 @@ namespace Covenant.Core
                     Source = this.GruntTemplateReplace(CodeTemplate, template, grunt, listener, profile),
                     TargetDotNetVersion = grunt.DotNetVersion,
                     OutputKind = outputKind,
-                    References = references
+                    References = references,
+                    UseMonoCompiler = useMonoCompiler
                 });
             }
             else if (grunt.DotNetVersion == Common.DotNetVersion.NetCore31)
@@ -1802,13 +1813,23 @@ namespace Covenant.Core
             };
         }
 
-        public async Task<IEnumerable<ReferenceAssembly>> GetDefaultNet40ReferenceAssemblies()
+        public async Task<IEnumerable<ReferenceAssembly>> GetDefaultNet45ReferenceAssemblies()
         {
             return new List<ReferenceAssembly>
             {
-                await this.GetReferenceAssemblyByName("mscorlib.dll", Common.DotNetVersion.Net40),
-                await this.GetReferenceAssemblyByName("System.dll", Common.DotNetVersion.Net40),
-                await this.GetReferenceAssemblyByName("System.Core.dll", Common.DotNetVersion.Net40)
+                await this.GetReferenceAssemblyByName("mscorlib.dll", Common.DotNetVersion.Net45),
+                await this.GetReferenceAssemblyByName("System.dll", Common.DotNetVersion.Net45),
+                await this.GetReferenceAssemblyByName("System.Core.dll", Common.DotNetVersion.Net45)
+            };
+        }
+
+        public async Task<IEnumerable<ReferenceAssembly>> GetDefaultNet48ReferenceAssemblies()
+        {
+            return new List<ReferenceAssembly>
+            {
+                await this.GetReferenceAssemblyByName("mscorlib.dll", Common.DotNetVersion.Net48),
+                await this.GetReferenceAssemblyByName("System.dll", Common.DotNetVersion.Net48),
+                await this.GetReferenceAssemblyByName("System.Core.dll", Common.DotNetVersion.Net48)
             };
         }
 

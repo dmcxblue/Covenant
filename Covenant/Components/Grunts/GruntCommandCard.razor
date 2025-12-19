@@ -42,14 +42,19 @@
         <div class="card-body interact-style">
             @if (GruntCommand.CommandOutput != null)
             {
-                if (GruntCommand.GruntTasking != null && GruntCommand.GruntTasking.GruntTask != null && GruntCommand.GruntTasking.GruntTask.Name == "ScreenShot")
+                if (GruntCommand.GruntTasking != null && GruntCommand.GruntTasking.GruntTask != null &&
+                    (GruntCommand.GruntTasking.GruntTask.Name == "ScreenShot" || GruntCommand.GruntTasking.GruntTask.Name == "screenshot"))
                 {
                     if (GruntCommand.GruntTasking.Status == GruntTaskingStatus.Progressed)
                     {<p class="terminal-text-color task-text-body" style="white-space:pre-wrap">Downloading screenshot... @GruntCommand.CommandOutput.Output.Length bytes</p>}
                     else if (GruntCommand.GruntTasking.Status == GruntTaskingStatus.Completed)
-                    {<img style="max-width: 100%" src="data:image/png;base64, @GruntCommand.CommandOutput.Output" />}
+                    {
+                        double sizeMB = (GruntCommand.CommandOutput.Output.Length * 3.0 / 4.0) / (1024.0 * 1024.0);
+                        <p class="terminal-text-color task-text-body" style="white-space:pre-wrap">Screenshot captured (@sizeMB.ToString("F2") MB) - View in Data tab</p>
+                    }
                 }
-                else if (GruntCommand.GruntTasking != null && GruntCommand.GruntTasking.GruntTask != null && GruntCommand.GruntTasking.GruntTask.Name == "Download")
+                else if (GruntCommand.GruntTasking != null && GruntCommand.GruntTasking.GruntTask != null &&
+                    (GruntCommand.GruntTasking.GruntTask.Name == "Download" || GruntCommand.GruntTasking.GruntTask.Name == "download"))
                 {
                     if (GruntCommand.GruntTasking.Status == GruntTaskingStatus.Progressed)
                     {<p class="terminal-text-color task-text-body" style="white-space:pre-wrap">Downloading... @GruntCommand.CommandOutput.Output.Length bytes</p>}

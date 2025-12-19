@@ -302,23 +302,19 @@
 </EditForm>
 
 @code {
-    private GruntTask _GruntTask;
+    private int _previousGruntTaskId;
+
     [Parameter]
-    public GruntTask GruntTask
+    public GruntTask GruntTask { get; set; }
+
+    protected override void OnParametersSet()
     {
-        get
+        if (GruntTask != null && GruntTask.Id != _previousGruntTaskId)
         {
-            return _GruntTask;
-        }
-        set
-        {
-            if (value != null && value.Id > 0)
+            _previousGruntTaskId = GruntTask.Id;
+            if (GruntTask.Id > 0)
             {
-                _GruntTask = Service.GetGruntTask(value.Id).WaitResult();
-            }
-            else
-            {
-                _GruntTask = value;
+                GruntTask = Service.GetGruntTask(GruntTask.Id).WaitResult();
             }
         }
     }

@@ -48,6 +48,9 @@ namespace Covenant
                 options.EnableSensitiveDataLogging(true);
             }, ServiceLifetime.Transient);
 
+            // Register launcher defaults configuration
+            services.Configure<Common.LauncherDefaults>(Configuration.GetSection("LauncherDefaults"));
+
             services.AddIdentity<CovenantUser, IdentityRole>()
                 .AddEntityFrameworkStores<CovenantContext>()
                 .AddDefaultTokenProviders();
@@ -143,7 +146,7 @@ namespace Covenant
             {
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                 options.SerializerSettings.Converters.Add(new StringEnumConverter(new CamelCaseNamingStrategy()));
-            }).SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_3_0);
+            });
             services.AddServerSideBlazor();
 
             services.AddRouting(options => options.LowercaseUrls = true);

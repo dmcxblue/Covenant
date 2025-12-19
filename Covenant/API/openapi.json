@@ -5869,7 +5869,7 @@
     "DotNetVersion": {
       "enum": [
         "Net35",
-        "Net40",
+        "Net45",
         "NetCore31"
       ],
       "type": "string",

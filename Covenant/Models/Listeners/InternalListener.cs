@@ -189,12 +189,17 @@ namespace Covenant.Models.Listeners
 
         private byte[] GetCompressedILAssembly40(string taskname)
         {
-            return File.ReadAllBytes(Common.CovenantTaskCSharpCompiledNet40Directory + taskname + ".compiled");
+            return File.ReadAllBytes(Common.CovenantTaskCSharpCompiledNet45Directory + taskname + ".compiled");
         }
 
         private byte[] GetCompressedILAssembly30(string taskname)
         {
             return File.ReadAllBytes(Common.CovenantTaskCSharpCompiledNetCoreApp30Directory + taskname + ".compiled");
+        }
+
+        private byte[] GetCompressedILAssembly48(string taskname)
+        {
+            return File.ReadAllBytes(Common.CovenantTaskCSharpCompiledNet48Directory + taskname + ".compiled");
         }
 
         private ModelUtilities.GruntTaskingMessage GetGruntTaskingMessage(APIModels.GruntTasking tasking, APIModels.DotNetVersion version)
@@ -210,7 +215,7 @@ namespace Covenant.Models.Listeners
                         Message += "," + String.Join(",", tasking.Parameters.Select(P => Convert.ToBase64String(Common.CovenantEncoding.GetBytes(P))));
                     }
                 }
-                else if (version == APIModels.DotNetVersion.Net40)
+                else if (version == APIModels.DotNetVersion.Net45)
                 {
                     Message = Convert.ToBase64String(this.GetCompressedILAssembly40(tasking.GruntTask.Name));
                     if (tasking.Parameters.Any())
@@ -226,10 +231,28 @@ namespace Covenant.Models.Listeners
                         Message += "," + String.Join(",", tasking.Parameters.Select(P => Convert.ToBase64String(Common.CovenantEncoding.GetBytes(P))));
                     }
                 }
+                else if (version == APIModels.DotNetVersion.Net48)
+                {
+                    Message = Convert.ToBase64String(this.GetCompressedILAssembly48(tasking.GruntTask.Name));
+                    if (tasking.Parameters.Any())
+                    {
+                        Message += "," + String.Join(",", tasking.Parameters.Select(P => Convert.ToBase64String(Common.CovenantEncoding.GetBytes(P))));
+                    }
+                }
             }
             else
             {
-                Message = string.Join(",", tasking.Parameters);
+                // Upload, Copy, and ExecuteAssembly expect pipe-separated parameters
+                if (tasking.Type == APIModels.GruntTaskingType.Upload ||
+                    tasking.Type == APIModels.GruntTaskingType.Copy ||
+                    tasking.Type == APIModels.GruntTaskingType.ExecuteAssembly)
+                {
+                    Message = string.Join("|", tasking.Parameters);
+                }
+                else
+                {
+                    Message = string.Join(",", tasking.Parameters);
+                }
             }
             return new ModelUtilities.GruntTaskingMessage
             {
@@ -352,16 +375,20 @@ namespace Covenant.Models.Listeners
         {
             try
             {
+                Console.WriteLine($"InternalRead: Processing GUID={guid}");
                 APIModels.Grunt temp = await GetGruntForGuid(guid);
                 APIModels.Grunt grunt = await CheckInGrunt(temp);
                 if (grunt == null)
                 {
                     // Invalid GUID. May not be legitimate Grunt request, respond Ok
+                    Console.WriteLine($"InternalRead: grunt is null for GUID={guid}");
                     this.PushCache(guid, new GruntMessageCacheInfo { Status = GruntMessageCacheStatus.Ok, Message = "" });
                 }
                 else
                 {
+                    Console.WriteLine($"InternalRead: Fetching taskings for grunt Id={grunt.Id}, Name={grunt.Name}");
                     IList<APIModels.GruntTasking> gruntTaskings = await _client.GetSearchUninitializedGruntTaskingsAsync(grunt.Id ?? default);
+                    Console.WriteLine($"InternalRead: Found {gruntTaskings?.Count ?? 0} uninitialized taskings for grunt Id={grunt.Id}");
                     if (gruntTaskings == null || gruntTaskings.Count == 0)
                     {
                         // No GruntTasking assigned. Respond with empty template
@@ -372,9 +399,11 @@ namespace Covenant.Models.Listeners
                         foreach (APIModels.GruntTasking tasking in gruntTaskings)
                         {
                             APIModels.GruntTasking gruntTasking = tasking;
+                            Console.WriteLine($"InternalRead: Processing tasking Id={gruntTasking.Id}, Name={gruntTasking.Name}, Type={gruntTasking.Type}, GruntTask={gruntTasking.GruntTask?.Name}");
                             if (gruntTasking.Type == APIModels.GruntTaskingType.Assembly && gruntTasking.GruntTask == null)
                             {
                                 // Can't find corresponding task. Should never reach this point. Will just respond NotFound.
+                                Console.WriteLine($"InternalRead: GruntTask is null for Assembly type tasking Id={gruntTasking.Id}");
                                 this.PushCache(guid, new GruntMessageCacheInfo { Status = GruntMessageCacheStatus.NotFound, Message = "", Tasking = gruntTasking });
                             }
                             else
@@ -383,9 +412,11 @@ namespace Covenant.Models.Listeners
                                 ModelUtilities.GruntEncryptedMessage message = null;
                                 try
                                 {
+                                    Console.WriteLine($"InternalRead: Creating message for tasking Id={gruntTasking.Id}");
                                     message = this.CreateMessageForGrunt(grunt, gruntTasking.Grunt, this.GetGruntTaskingMessage(gruntTasking, gruntTasking.Grunt.DotNetVersion));
                                     // Transform response
                                     string transformed = this._utilities.ProfileTransform(_transform, Common.CovenantEncoding.GetBytes(JsonConvert.SerializeObject(message)));
+                                    Console.WriteLine($"InternalRead: Pushing tasking Id={gruntTasking.Id} to cache for GUID={guid}");
                                     this.PushCache(guid, new GruntMessageCacheInfo { Status = GruntMessageCacheStatus.Ok, Message = transformed, Tasking = gruntTasking });
                                 }
                                 catch (HttpOperationException)
@@ -503,8 +534,9 @@ namespace Covenant.Models.Listeners
                         return guid;
                 }
             }
-            catch
+            catch (Exception e)
             {
+                Console.Error.WriteLine($"InternalListener.Write Exception: {e.Message}{Environment.NewLine}{e.StackTrace}");
                 this.PushCache(guid, new GruntMessageCacheInfo { Status = GruntMessageCacheStatus.NotFound, Message = "", Tasking = null });
                 return guid;
             }
@@ -617,6 +649,14 @@ namespace Covenant.Models.Listeners
             }
             else
             {
+                // Verify grunt has valid ID before editing
+                if (targetGrunt.Id == null || targetGrunt.Id == 0)
+                {
+                    Console.Error.WriteLine($"PostStage0: targetGrunt has invalid ID: {targetGrunt.Id}, OriginalServerGuid: {targetGrunt.OriginalServerGuid}");
+                    this.PushCache(guid, new GruntMessageCacheInfo { Status = GruntMessageCacheStatus.NotFound, Message = "", Tasking = null });
+                    return;
+                }
+                Console.WriteLine($"PostStage0: Updating existing grunt Id={targetGrunt.Id}, Name={targetGrunt.Name}, Status={targetGrunt.Status} -> Stage0");
                 targetGrunt.Status = APIModels.GruntStatus.Stage0;
                 targetGrunt.Guid = targetGuid;
                 targetGrunt.LastCheckIn = DateTime.UtcNow;

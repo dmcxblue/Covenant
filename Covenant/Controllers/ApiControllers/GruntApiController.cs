@@ -2,6 +2,7 @@
 // Project: Covenant (https://github.com/cobbr/Covenant)
 // License: GNU GPLv3
 
+using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
@@ -193,14 +194,33 @@ namespace Covenant.Controllers
         {
             try
             {
-                return await _service.EditGrunt(grunt, await _service.GetCurrentUser(HttpContext.User));
+                if (grunt == null)
+                {
+                    Console.Error.WriteLine("EditGrunt: Received null grunt");
+                    return BadRequest("Grunt cannot be null");
+                }
+                Console.WriteLine($"EditGrunt: Received grunt Id={grunt.Id}, Name={grunt.Name}, OriginalServerGuid={grunt.OriginalServerGuid}, Status={grunt.Status}");
+                // Try to get current user, but allow null for service user calls
+                CovenantUser currentUser = null;
+                try
+                {
+                    currentUser = await _service.GetCurrentUser(HttpContext.User);
+                }
+                catch (ControllerNotFoundException)
+                {
+                    // Service user calls may not have a standard user context - this is OK
+                    Console.WriteLine("EditGrunt: No user context (likely service user call)");
+                }
+                return await _service.EditGrunt(grunt, currentUser);
             }
             catch (ControllerNotFoundException e)
             {
+                Console.Error.WriteLine($"EditGrunt: ControllerNotFoundException - {e.Message}");
                 return NotFound(e.Message);
             }
             catch (ControllerBadRequestException e)
             {
+                Console.Error.WriteLine($"EditGrunt: ControllerBadRequestException - {e.Message}");
                 return BadRequest(e.Message);
             }
         }

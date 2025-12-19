@@ -19,8 +19,10 @@ namespace Covenant.API.Models
     {
         [EnumMember(Value = "Net35")]
         Net35,
-        [EnumMember(Value = "Net40")]
-        Net40,
+        [EnumMember(Value = "Net45")]
+        Net45,
+        [EnumMember(Value = "Net48")]
+        Net48,
         [EnumMember(Value = "NetCore31")]
         NetCore31
     }
@@ -37,8 +39,10 @@ namespace Covenant.API.Models
             {
                 case DotNetVersion.Net35:
                     return "Net35";
-                case DotNetVersion.Net40:
-                    return "Net40";
+                case DotNetVersion.Net45:
+                    return "Net45";
+                case DotNetVersion.Net48:
+                    return "Net48";
                 case DotNetVersion.NetCore31:
                     return "NetCore31";
             }
@@ -51,8 +55,10 @@ namespace Covenant.API.Models
             {
                 case "Net35":
                     return DotNetVersion.Net35;
-                case "Net40":
-                    return DotNetVersion.Net40;
+                case "Net45":
+                    return DotNetVersion.Net45;
+                case "Net48":
+                    return DotNetVersion.Net48;
                 case "NetCore31":
                     return DotNetVersion.NetCore31;
             }

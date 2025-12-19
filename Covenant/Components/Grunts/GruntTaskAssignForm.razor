@@ -4,13 +4,16 @@
 @using System.Threading
 @using System.Threading.Tasks
 @using Microsoft.AspNetCore.Components.Forms
-@using BlazorInputFile
 @using Covenant.Core
 @using Covenant.Models.Grunts
 
 @if (GruntTasks == null)
 {
     <p>Loading...</p>
+}
+else if (GruntTask == null)
+{
+    <p>No tasks available for this grunt.</p>
 }
 else
 {
@@ -88,7 +91,7 @@ else
     {
         this.GruntTasks = (await Service.GetGruntTasksForGrunt(this.GruntId)).OrderBy(GT => GT.Name).ToList();
         Service.DisposeContext();
-        this.GruntTask = this.GruntTasks.First();
+        this.GruntTask = this.GruntTasks.FirstOrDefault();
     }
 
     private async Task OnTask()
@@ -108,30 +111,29 @@ else
     }
 
     private string ErrorMessage { get; set; }
-    private async Task OnUpload(IFileListEntry[] files)
+    private async Task OnUpload(InputFileChangeEventArgs e)
     {
         try
         {
             await UploadSemaphore.WaitAsync();
             this.UploadInProgress = true;
             this.StateHasChanged();
-            for (int i = 0; i < files.Length; i++)
+            var files = e.GetMultipleFiles();
+            for (int i = 0; i < files.Count; i++)
             {
                 if (files[i] != null)
                 {
                     MemoryStream ms = new MemoryStream();
-                    await files[i].Data.CopyToAsync(ms);
+                    await files[i].OpenReadStream(maxAllowedSize: 100 * 1024 * 1024).CopyToAsync(ms);
 
                     GruntTaskOption option = this.GruntTask.Options.Where(O => O.FileOption).ToList()[i];
                     option.Value = Convert.ToBase64String(ms.ToArray());
-
-                    files[i] = null;
                 }
             }
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            this.ErrorMessage = e.Message;
+            this.ErrorMessage = ex.Message;
         }
         this.UploadInProgress = false;
         this.StateHasChanged();
